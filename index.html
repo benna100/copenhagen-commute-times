@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- Mobile header color for Chrome, Firefox OS and Opera -->
+        <meta name="theme-color" content="#ff4970" />
+        <!-- Mobile header color Windows Phone -->
+        <meta name="msapplication-navbutton-color" content="#ff4970" />
+        <!-- Mobile header color for iOS Safari (supports black, black-translucent or default) -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link
+            href="https://fonts.googleapis.com/css?family=Open+Sans:400,800"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700|Open+Sans:300,400,600"
+            rel="stylesheet"
+        />
+        <!-- Include Leaflet -->
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+        <link
+            href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+            rel="stylesheet"
+        />
+        <!-- Include CARTO.js -->
+        <script src="https://libs.cartocdn.com/carto.js/v4.1.11/carto.min.js"></script>
+        <link
+            href="https://fonts.googleapis.com/css?family=Montserrat:600"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css?family=Open+Sans"
+            rel="stylesheet"
+        />
+        <link
+            href="https://carto.com/developers/carto-js/examples/maps/public/style.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+            rel="stylesheet"
+        />
+        <!-- Primary Meta Tags -->
+        <title>Copenhagen commute times</title>
+    <meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#fff"><meta name="application-name" content="game-of-life}}"><link rel="apple-touch-icon" sizes="57x57" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-icon-180x180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="game-of-life}}"><link rel="icon" type="image/png" sizes="32x32" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/favicon-16x16.png"><link rel="shortcut icon" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/favicon.ico"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-320x460.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-640x920.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-640x1096.png"><link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-750x1294.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-1182x2208.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-1242x2148.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-748x1024.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-768x1004.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-1496x2048.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="icons-4b34a38ce9ee365bfe14ea537108c0b5/apple-touch-startup-image-1536x2008.png"><link href="styles.312ea0d869a4b1084098.css" rel="stylesheet"><meta property="fb:app_id" content="123456789" /><meta property="og:url" content="https://github-username.github.io/your-repo-name/" /><meta property="og:type" content="website" /><meta property="og:title" content="Facebook title" /><meta property="og:image" content="https://benna100.github.io/random-parti/social.png" /><meta property="og:description" content="Facebook description" /><meta property="og:site_name" content="Your sitename" /><meta property="og:locale" content="da" /><meta property="og:article:author" content="Your name" /><meta name="twitter:card" content="summary" /><meta name="twitter:site" content="@site_account" /><meta name="twitter:creator" content="@twitterhandle" /><meta name="twitter:url" content="https://github-username.github.io/your-repo-name/" /><meta name="twitter:title" content="Twitter title" /><meta name="twitter:description" content="Twitter description" /><meta name="twitter:image" content="https://benna100.github.io/random-parti/social.png" /></head>
+
+    <body>
+        <main>
+            <h1>
+                How long will it take to travel to Copenhagen with public
+                transportation?
+            </h1>
+            <p>
+                My girlfriend and i have been looking at houses within
+                reasonable distance of Copenhagen. One question that kept
+                popping up was the following:
+                <strong>
+                    How far from Copenhagen can I live but still have a short
+                    commute.</strong
+                >
+            </p>
+            <p>
+                Why were we interested in being far away from Copenhagen? Far
+                away often means cheaper.
+            </p>
+            <p>
+                So I made a map that shows the time it takes to arrive at
+                <strong
+                    >Hovedbanegården at 9:00 pm with public
+                    transportation</strong
+                >. This is shown using the color of the point. Darker colors
+                corresponds to a longer travel time.
+            </p>
+            <section class="points-map">
+                <div class="points-map-container">
+                    <div id="points-map"></div>
+                    <div class="legend">
+                        <p>Travel time to Copenhagen</p>
+                        <ul>
+                            <li>Up to 20 min</li>
+                            <li>Up to 40 min</li>
+                            <li>Up to 1 hour</li>
+                            <li>Up to 1 hour and 20 min</li>
+                            <li>Up to 1 hour and 40 min</li>
+                            <li>Up to 2 hours</li>
+                            <li>more than 2 hours</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="slider-container">
+                    <p>
+                        Commute time: <strong><span></span></strong>
+                    </p>
+                    <div class="slider"></div>
+                </div>
+            </section>
+
+            <section class="hexbin-map">
+                <h2>Averaged map</h2>
+                <span>
+                    This is another way to visualize the map above. Here the
+                    points have been averaged into a small area shaped as a
+                    hexagon.
+                </span>
+                <div class="hexbin-map-container">
+                    <div class="legend">
+                        <p>Travel time to Copenhagen</p>
+                        <ul>
+                            <li>Up to 20 min</li>
+                            <li>Up to 40 min</li>
+                            <li>Up to 1 hour</li>
+                            <li>Up to 1 hour and 20 min</li>
+                            <li>Up to 1 hour and 40 min</li>
+                            <li>Up to 2 hours</li>
+                            <li>more than 2 hours</li>
+                        </ul>
+                    </div>
+                    <div id="hexbin-map"></div>
+                </div>
+            </section>
+            <section>
+                <h2>Analysis</h2>
+                <img
+                    src="assets/40-minutes.png"
+                    alt="40 minutest commute to Copenhagen"
+                />
+                <p>
+                    Putting the slider to 40 minutes shows some interesting
+                    cities like
+                    <strong
+                        >Køge, Viby, Lejre, Ølstykke, Lillerød and Espergærde,
+                        Humlebæk</strong
+                    >
+                    If you are looking for house value compared to commuter time
+                    cities like Viby, Ølstykke and Lillerød are pretty good. I
+                    also think its pretty interesting how far you can get within
+                    40 minutes of travelling.
+                </p>
+                <p>
+                    Changing the commute time to 55 minutes will show a quite
+                    interesting city called <strong>Glumsø.</strong>
+                </p>
+
+                <img src="assets/glumsoe.png" alt="Glumsø city" />
+
+                <p>
+                    Its a city
+                    <strong>50 minutes from Copenhagen, close to nature</strong>
+                    and you can get magnificent houses like the one below for
+                    1.995.000 kr. YES thats under 2 million 😲 (technically at
+                    least)
+                </p>
+                <a
+                    href="https://www.edc.dk/alle-boliger/glums%C3%B8/4171/bavelsevej-25/?sagsnr=47108616"
+                    target="_blank"
+                >
+                    <img
+                        src="assets/beautiful-house.png"
+                        alt="Beautiful house in Glumsø"
+                    />
+                </a>
+                <p>
+                    There are probably lots more to explore with the map, but
+                    these were just some highlights i found.
+                </p>
+            </section>
+            <section>
+                <h2>Outro</h2>
+                <p>
+                    As a next step it would be awesome to do the exact same
+                    thing with house prices. Could be interesting to have areas
+                    with
+                    <strong
+                        >low commute time and low average houseprices.
+                    </strong>
+                </p>
+                <p>
+                    If you know where to get this data, write me on
+                    <strong>benjamin.dals.hughes@gmail.com</strong>
+                </p>
+                <p>
+                    Made by
+                    <a href="https://twitter.com/dalshughes" target="_blank"
+                        >Benjamin Hughes</a
+                    >
+                </p>
+                <p>
+                    Idea by
+                    <a href="https://twitter.com/dalshughes" target="_blank"
+                        >Benjamin Hughes</a
+                    >
+                    and
+                    <a
+                        href="https://www.economics.ku.dk/staff/phd_kopi/?pure=en/persons/333071"
+                        target="_blank"
+                        >Anders Munk Nielsen</a
+                    >
+                </p>
+                <p>
+                    And i am not paid by anyone to do this (though i wish i
+                    were)
+                </p>
+            </section>
+        </main>
+    <script type="text/javascript" src="main.6071b7c0c24e1832299e.js"></script></body>
+</html>
