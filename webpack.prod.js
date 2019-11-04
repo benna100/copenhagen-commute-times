@@ -136,23 +136,25 @@ module.exports = {
             appUrl: "https://benna100.github.io/random-parti/",
             facebook: {
                 "fb:app_id": "123456789",
-                "og:url": "https://github-username.github.io/your-repo-name/",
+                "og:url":
+                    "https://benna100.github.io/copenhagen-commute-times/",
                 "og:type": "website",
-                "og:title": "Facebook title",
+                "og:title": "Copenhagen commute times",
                 "og:image": "./src/assets/social.png",
-                "og:description": "Facebook description",
-                "og:site_name": "Your sitename",
+                "og:description":
+                    "How long will it take to travel to Copenhagen with public transportation?",
+                "og:site_name": "Copenhagen commute times",
                 "og:locale": "da",
-                "og:article:author": "Your name"
+                "og:article:author": "Benjamin Hughes"
             },
             twitter: {
                 "twitter:card": "summary",
-                "twitter:site": "@site_account",
-                "twitter:creator": "@twitterhandle",
+                "twitter:creator": "@dalshughes",
                 "twitter:url":
-                    "https://github-username.github.io/your-repo-name/",
-                "twitter:title": "Twitter title",
-                "twitter:description": "Twitter description",
+                    "https://benna100.github.io/copenhagen-commute-times/",
+                "twitter:title": "Copenhagen commute times",
+                "twitter:description":
+                    "How long will it take to travel to Copenhagen with public transportation?",
                 "twitter:image": "./src/assets/social.png"
             }
         })

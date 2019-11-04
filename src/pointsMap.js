@@ -33,7 +33,7 @@ export default function() {
     const slider = document.querySelector(".slider");
 
     noUiSlider.create(slider, {
-        start: 8000,
+        start: 3300,
         connect: [true, false],
         range: {
             min: 0,
