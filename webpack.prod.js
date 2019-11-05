@@ -133,14 +133,14 @@ module.exports = {
             canPrint: true
         }),
         new SocialTags({
-            appUrl: "https://benna100.github.io/random-parti/",
+            appUrl: "https://benna100.github.io/copenhagen-commute-times/",
             facebook: {
                 "fb:app_id": "123456789",
                 "og:url":
                     "https://benna100.github.io/copenhagen-commute-times/",
                 "og:type": "website",
                 "og:title": "Copenhagen commute times",
-                "og:image": "./src/assets/social.png",
+                "og:image": "./src/assets/social-facebook.png",
                 "og:description":
                     "How long will it take to travel to Copenhagen with public transportation?",
                 "og:site_name": "Copenhagen commute times",
@@ -148,14 +148,14 @@ module.exports = {
                 "og:article:author": "Benjamin Hughes"
             },
             twitter: {
-                "twitter:card": "summary",
+                "twitter:card": "summary_large_image",
                 "twitter:creator": "@dalshughes",
                 "twitter:url":
                     "https://benna100.github.io/copenhagen-commute-times/",
                 "twitter:title": "Copenhagen commute times",
                 "twitter:description":
                     "How long will it take to travel to Copenhagen with public transportation?",
-                "twitter:image": "./src/assets/social.png"
+                "twitter:image": "./src/assets/social-twitter.png"
             }
         })
     ]
