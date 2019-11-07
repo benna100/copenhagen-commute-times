@@ -50,7 +50,7 @@ export default function() {
         source.setQuery(`
     SELECT *
       FROM distances
-      WHERE durationinseconds < ${selectedValue}
+      WHERE durationinseconds <= ${selectedValue}
   `);
     });
 
