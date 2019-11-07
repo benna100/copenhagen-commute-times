@@ -1,13 +1,13 @@
 export default function() {
-  const client = new window.carto.Client({
-    apiKey: "1f1dc35961988be9137b98bd163fe8927f1b68bc",
-    username: "benna100"
-  });
+    const client = new window.carto.Client({
+        apiKey: "okNxK8jzzM39Lpj-7ZHYcw",
+        username: "benna100"
+    });
 
-  const map = window.L.map("hexbin-map").setView([55.8, 12.5], 8);
-  map.scrollWheelZoom.disable();
+    const map = window.L.map("hexbin-map").setView([55.8, 12.5], 8);
+    map.scrollWheelZoom.disable();
 
-  const source = new window.carto.source.SQL(`
+    const source = new window.carto.source.SQL(`
           -- Create hexagon grid
           WITH hgrid AS (
               SELECT CDB_HexagonGrid(
@@ -27,9 +27,9 @@ export default function() {
           GROUP BY hgrid.cell
         `);
 
-  // define styles of layer. We will style the color of the geometry based on the value
-  // of the column "agg_value" of the SQL query.
-  const style = new window.carto.style.CartoCSS(`
+    // define styles of layer. We will style the color of the geometry based on the value
+    // of the column "agg_value" of the SQL query.
+    const style = new window.carto.style.CartoCSS(`
           #layer {
             polygon-opacity: 0.74;
 
@@ -58,17 +58,17 @@ export default function() {
 
         `);
 
-  const layer = new window.carto.layer.Layer(source, style);
-  window.L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-    {
-      maxZoom: 18
-    }
-  ).addTo(map);
-  layer.on("featureClick", featureEvent => {
-    console.log(featureEvent);
-  });
+    const layer = new window.carto.layer.Layer(source, style);
+    window.L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+        {
+            maxZoom: 18
+        }
+    ).addTo(map);
+    layer.on("featureClick", featureEvent => {
+        console.log(featureEvent);
+    });
 
-  client.addLayer(layer);
-  client.getLeafletLayer().addTo(map);
+    client.addLayer(layer);
+    client.getLeafletLayer().addTo(map);
 }

@@ -24,7 +24,7 @@ export default function() {
     }
 
     const client = new window.carto.Client({
-        apiKey: "1f1dc35961988be9137b98bd163fe8927f1b68bc",
+        apiKey: "okNxK8jzzM39Lpj-7ZHYcw",
         username: "benna100"
     });
 
