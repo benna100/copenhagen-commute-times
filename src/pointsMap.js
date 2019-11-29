@@ -43,49 +43,48 @@ export default function() {
 
     const commuteTimeSpan = document.querySelector(".slider-container p span");
 
-    slider.noUiSlider.on("update", function(values, handle) {
-        commuteTimeSpan.innerHTML = secondsToHms(values[handle]);
-        const selectedValue = values[0];
+    slider.noUiSlider.on("update", function([selectedSeconds]) {
+        commuteTimeSpan.innerHTML = secondsToHms(selectedSeconds);
 
         source.setQuery(`
-    SELECT *
-      FROM distances
-      WHERE durationinseconds <= ${selectedValue}
-  `);
+          SELECT *
+            FROM distances
+            WHERE durationinseconds <= ${selectedSeconds}
+        `);
     });
 
     const style = new window.carto.style.CartoCSS(`
-  #layer {
-    marker-width: 7;
-    marker-fill-opacity: 0.5;
-    marker-allow-overlap: true;
-    marker-line-width: 0;
-  }
-  
-  #layer {
-    [durationinseconds > 0] {
-      marker-fill: #ecda9a;
-    }
-    [durationinseconds > 1200] {
-      marker-fill: #efc47e;
-    }
-    [durationinseconds > 2400] {
-      marker-fill: #f3ad6a;
-    }
-    [durationinseconds > 3600] {
-      marker-fill: #f7945d;
-    }
-    [durationinseconds > 4800] {
-      marker-fill: #f97b57;
-    }
-    [durationinseconds > 6000] {
-      marker-fill: #f66356;
-    }
-    [durationinseconds > 7200] {
-      marker-fill: #ee4d5a;
-    }
-  }
-        `);
+      #layer {
+        marker-width: 7;
+        marker-fill-opacity: 0.5;
+        marker-allow-overlap: true;
+        marker-line-width: 0;
+      }
+      
+      #layer {
+        [durationinseconds > 0] {
+          marker-fill: #ecda9a;
+        }
+        [durationinseconds > 1200] {
+          marker-fill: #efc47e;
+        }
+        [durationinseconds > 2400] {
+          marker-fill: #f3ad6a;
+        }
+        [durationinseconds > 3600] {
+          marker-fill: #f7945d;
+        }
+        [durationinseconds > 4800] {
+          marker-fill: #f97b57;
+        }
+        [durationinseconds > 6000] {
+          marker-fill: #f66356;
+        }
+        [durationinseconds > 7200] {
+          marker-fill: #ee4d5a;
+        }
+      }
+    `);
 
     const layer = new window.carto.layer.Layer(source, style);
 
