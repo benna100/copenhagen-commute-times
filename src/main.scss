@@ -155,8 +155,17 @@ img {
     &:nth-child(5)::before {
         background-color: #a50f15;
     }
-    &:nth-child(6)::before {
-        background-color: rgb(51, 128, 158);
+    &:nth-child(6) {
+        margin-top: 12px;
+
+        &::before {
+            background-color: rgb(51, 128, 158);
+            border: none;
+            width: 7px;
+            height: 7px;
+            left: 4px;
+            top: 4px;
+        }
     }
 }
 

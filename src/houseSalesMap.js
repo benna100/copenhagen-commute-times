@@ -5,6 +5,40 @@ export default function() {
     const hexagonSizes = 15;
     const houseSalesMap = window.L.map("house-sales").setView([55.7, 12.5], 9);
     houseSalesMap.scrollWheelZoom.disable();
+    console.log(houseSalesMap._onResize);
+    const defaultMarkerWidth = 3;
+    const randomPointsStyle = new window.carto.style.CartoCSS(`
+    #layer {
+      marker-width: ${defaultMarkerWidth};
+      marker-fill-opacity: 0.3;
+      marker-allow-overlap: true;
+      marker-line-width: 0;
+      marker-fill: rgb(51, 128, 158);
+    }
+  `);
+    let isZoomLevelAboveEightPrev = false;
+    houseSalesMap.on("zoom", function(e) {
+        const zoomLevel = e.target._animateToZoom;
+
+        const isZoomLevelAboveEightCurrent = zoomLevel <= 8;
+        if (isZoomLevelAboveEightPrev !== isZoomLevelAboveEightCurrent) {
+            randomPointsStyle.setContent(`
+              #layer {
+                  marker-width: ${
+                      isZoomLevelAboveEightCurrent ? 2 : defaultMarkerWidth
+                  };
+                  marker-fill-opacity: ${
+                      isZoomLevelAboveEightCurrent ? 0.2 : 0.3
+                  };
+                  marker-allow-overlap: true;
+                  marker-line-width: 0;
+                  marker-fill: rgb(51, 128, 158);
+                }
+            `);
+        }
+
+        isZoomLevelAboveEightPrev = isZoomLevelAboveEightCurrent;
+    });
 
     window.L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
@@ -32,16 +66,6 @@ export default function() {
     const randomPointsSource = new window.carto.source.SQL(
         "SELECT * FROM distances"
     );
-
-    const randomPointsStyle = new window.carto.style.CartoCSS(`
-      #layer {
-        marker-width: 4;
-        marker-fill-opacity: 0.3;
-        marker-allow-overlap: true;
-        marker-line-width: 0;
-        marker-fill: rgb(51, 128, 158);
-      }
-    `);
 
     // #layer {
     //   [durationinseconds > 0] {
