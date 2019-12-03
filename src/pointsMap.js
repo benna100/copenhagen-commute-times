@@ -30,7 +30,7 @@ export default function() {
 
     const source = new window.carto.source.SQL("SELECT * FROM distances");
 
-    const slider = document.querySelector(".slider");
+    const slider = document.querySelector(".points-map .slider");
 
     noUiSlider.create(slider, {
         start: 3300,
@@ -41,7 +41,9 @@ export default function() {
         }
     });
 
-    const commuteTimeSpan = document.querySelector(".slider-container p span");
+    const commuteTimeSpan = document.querySelector(
+        ".points-map .slider-container p span"
+    );
 
     slider.noUiSlider.on("update", function([selectedSeconds]) {
         commuteTimeSpan.innerHTML = secondsToHms(selectedSeconds);

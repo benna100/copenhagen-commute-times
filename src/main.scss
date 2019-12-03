@@ -111,38 +111,61 @@ img {
                 border-radius: 100%;
                 border: solid 1px grey;
             }
-            &:nth-child(1)::before {
-                background-color: #ecda9a;
-            }
-            &:nth-child(2)::before {
-                background-color: #efc47e;
-            }
-            &:nth-child(3)::before {
-                background-color: #f3ad6a;
-            }
-            &:nth-child(4)::before {
-                background-color: #f7945d;
-            }
-            &:nth-child(5)::before {
-                background-color: #f97b57;
-            }
-            &:nth-child(6)::before {
-                background-color: #f66356;
-            }
-            &:nth-child(7)::before {
-                background-color: #ee4d5a;
-            }
         }
     }
 }
 
-.points-map-container {
+.points-map .legend ul li {
+    &:nth-child(1)::before {
+        background-color: #ecda9a;
+    }
+    &:nth-child(2)::before {
+        background-color: #efc47e;
+    }
+    &:nth-child(3)::before {
+        background-color: #f3ad6a;
+    }
+    &:nth-child(4)::before {
+        background-color: #f7945d;
+    }
+    &:nth-child(5)::before {
+        background-color: #f97b57;
+    }
+    &:nth-child(6)::before {
+        background-color: #f66356;
+    }
+    &:nth-child(7)::before {
+        background-color: #ee4d5a;
+    }
+}
+
+.house-sales-map .legend ul li {
+    &:nth-child(1)::before {
+        background-color: #fcbba1;
+    }
+    &:nth-child(2)::before {
+        background-color: #fc9272;
+    }
+    &:nth-child(3)::before {
+        background-color: #fb6a4a;
+    }
+    &:nth-child(4)::before {
+        background-color: #de2d26;
+    }
+    &:nth-child(5)::before {
+        background-color: #a50f15;
+    }
+}
+
+.points-map-container,
+.house-sales-container {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
 }
 
 section.points-map,
+section.house-sales-map,
 .hexbin-map-container {
     position: relative;
     margin-bottom: 36px;
@@ -155,6 +178,7 @@ section.points-map,
 }
 
 #points-map,
-#hexbin-map {
+#hexbin-map,
+#house-sales {
     height: 70vh;
 }

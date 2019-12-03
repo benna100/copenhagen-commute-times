@@ -82,6 +82,7 @@
                 >. This is shown using the color of the point. Darker colors
                 corresponds to a longer travel time.
             </p>
+
             <section class="points-map">
                 <div class="points-map-container">
                     <div id="points-map"></div>
@@ -107,7 +108,37 @@
                 </div>
             </section>
 
-            <section class="hexbin-map">
+            <section class="house-sales-map">
+                <h2>House prices</h2>
+                <p>
+                    This map shows the averaged house prices of
+                    <strong>standalone houses sold in 2018 and 2019</strong>. If
+                    you want a <strong>cheap house</strong>, look for the
+                    <strong>lighter colored areas</strong>.
+                </p>
+                <div class="house-sales-container">
+                    <div id="house-sales"></div>
+                    <div class="legend">
+                        <p>Averaged house prices</p>
+                        <ul>
+                            <li>0 - 1.5 million</li>
+                            <li>1.5 - 3 million</li>
+                            <li>3 - 4.5 million</li>
+                            <li>4.5 - 6 million</li>
+                            <li>More than 6 million</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="slider-container duration">
+                    <p>
+                        Commute time: <strong><span></span></strong>
+                    </p>
+                    <div class="slider duration"></div>
+                </div>
+            </section>
+
+            <!-- <section class="hexbin-map">
                 <h2>Averaged map</h2>
                 <span>
                     This is another way to visualize the map above. Here the
@@ -129,7 +160,7 @@
                     </div>
                     <div id="hexbin-map"></div>
                 </div>
-            </section>
+            </section> -->
             <section>
                 <h2>Analysis</h2>
                 <img
