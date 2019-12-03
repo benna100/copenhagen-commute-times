@@ -2,7 +2,7 @@ import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.css";
 
 export default function() {
-    const pointsMap = window.L.map("points-map").setView([55.8, 12.5], 8);
+    const pointsMap = window.L.map("points-map").setView([55.7, 12.5], 9);
     pointsMap.scrollWheelZoom.disable();
 
     window.L.tileLayer(

@@ -155,6 +155,9 @@ img {
     &:nth-child(5)::before {
         background-color: #a50f15;
     }
+    &:nth-child(6)::before {
+        background-color: rgb(51, 128, 158);
+    }
 }
 
 .points-map-container,
