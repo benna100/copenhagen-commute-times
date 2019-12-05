@@ -61,29 +61,24 @@ export default function() {
         marker-fill-opacity: 0.5;
         marker-allow-overlap: true;
         marker-line-width: 0;
+        marker-fill: rgb(51, 128, 158);
       }
       
       #layer {
         [durationinseconds > 0] {
-          marker-fill: #ecda9a;
+          marker-fill: #d0d1e6;
         }
         [durationinseconds > 1200] {
-          marker-fill: #efc47e;
+          marker-fill: #a6bddb;
         }
         [durationinseconds > 2400] {
-          marker-fill: #f3ad6a;
+          marker-fill: #74a9cf;
         }
         [durationinseconds > 3600] {
-          marker-fill: #f7945d;
+          marker-fill: #2b8cbe;
         }
         [durationinseconds > 4800] {
-          marker-fill: #f97b57;
-        }
-        [durationinseconds > 6000] {
-          marker-fill: #f66356;
-        }
-        [durationinseconds > 7200] {
-          marker-fill: #ee4d5a;
+          marker-fill: #045a8d;
         }
       }
     `);

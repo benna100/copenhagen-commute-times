@@ -43,7 +43,7 @@ h3 {
 
 span,
 p {
-    line-height: 1.5rem;
+    line-height: 1.7rem;
 }
 
 p {
@@ -119,25 +119,19 @@ img {
 
 .points-map .legend ul li {
     &:nth-child(1)::before {
-        background-color: #ecda9a;
+        background-color: #d0d1e6;
     }
     &:nth-child(2)::before {
-        background-color: #efc47e;
+        background-color: #a6bddb;
     }
     &:nth-child(3)::before {
-        background-color: #f3ad6a;
+        background-color: #74a9cf;
     }
     &:nth-child(4)::before {
-        background-color: #f7945d;
+        background-color: #2b8cbe;
     }
     &:nth-child(5)::before {
-        background-color: #f97b57;
-    }
-    &:nth-child(6)::before {
-        background-color: #f66356;
-    }
-    &:nth-child(7)::before {
-        background-color: #ee4d5a;
+        background-color: #045a8d;
     }
 }
 
