@@ -73,7 +73,30 @@ img {
 
     .slider {
         max-width: 450px;
+        margin-bottom: 18px;
+    }
+
+    .transportation-wrapper {
+        display: flex;
+        justify-content: space-around;
         margin-bottom: 12px;
+
+        button {
+            width: 100%;
+            display: block;
+            background-color: transparent;
+            border: 1px lightgrey solid;
+            padding: 6px 8px;
+            border-radius: 4px;
+
+            &:nth-child(1) {
+                margin-right: 8px;
+            }
+
+            &.active {
+                background-color: lightgrey;
+            }
+        }
     }
 }
 

@@ -28,7 +28,54 @@ export default function() {
         username: "benna100"
     });
 
-    const source = new window.carto.source.SQL("SELECT * FROM distances");
+    const source = new window.carto.source.SQL(
+        "SELECT * FROM random_points_driving_copenhagen_diff_1"
+    );
+
+    const hexagonSizes = 15;
+    const houseSalesSource = new window.carto.source.SQL(`
+          -- Create hexagon grid
+          WITH hgrid AS (
+              SELECT CDB_HexagonGrid(
+                  ST_Expand(!bbox!, CDB_XYZ_Resolution(9) * ${hexagonSizes}),
+                  CDB_XYZ_Resolution(9) * ${hexagonSizes}) as cell
+              )
+
+          -- select the data from the "virtual table" hgrid, which has been created
+          -- using the "WITH" statement of PostgreSQL,
+          -- that intesects with the dataset of points "stormevents_locations_2014"
+
+          SELECT  hgrid.cell as the_geom_webmercator,
+                  avg(price) as agg_value,
+                  row_number() over () as cartodb_id
+          FROM hgrid, (SELECT * FROM house_sales_with_combined_scoring) i
+          WHERE ST_Intersects(i.the_geom_webmercator, hgrid.cell) AND priceAndCommuteScoring != 0
+          GROUP BY hgrid.cell
+
+        `);
+
+    const houseSalesStyle = new window.carto.style.CartoCSS(`
+    #layer {
+      polygon-opacity: 0.74;
+
+      [agg_value > 0] {
+        polygon-fill: #fcbba1;
+      }
+      [agg_value > 1500000] {
+        polygon-fill: #fc9272;
+      }
+      [agg_value > 3000000] {
+        polygon-fill: #fb6a4a;
+      }
+      [agg_value > 4500000] {
+        polygon-fill: #de2d26;
+      }
+      [agg_value > 6000000] {
+        polygon-fill: #a50f15;
+      }
+    }
+
+        `);
 
     const slider = document.querySelector(".points-map .slider");
 
@@ -45,14 +92,117 @@ export default function() {
         ".points-map .slider-container p span"
     );
 
-    slider.noUiSlider.on("update", function([selectedSeconds]) {
+    const transportationButtons = document.querySelectorAll(
+        ".transportation-wrapper button"
+    );
+
+    let selectedSeconds;
+    slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
+        selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = secondsToHms(selectedSeconds);
+
+        const columnToFilter = transportationButtons[0].className.includes(
+            "active"
+        )
+            ? "durationinseconds"
+            : "commute_driving";
 
         source.setQuery(`
           SELECT *
-            FROM distances
+            FROM random_points_driving_copenhagen_diff_1
+            WHERE ${columnToFilter} <= ${selectedSeconds}
+        `);
+    });
+
+    let activeButton;
+    [...transportationButtons].forEach(transportationButton => {
+        transportationButton.addEventListener(
+            "click",
+            transportationButtonEvent => {
+                if (
+                    transportationButtonEvent.target.className.includes(
+                        "driving"
+                    )
+                ) {
+                    transportationButtons[0].classList.remove("active");
+                    transportationButtons[1].classList.add("active");
+
+                    source.setQuery(`
+                      SELECT *
+                        FROM random_points_driving_copenhagen_diff_1
+                        WHERE commute_driving <= ${selectedSeconds}
+                    `);
+
+                    style.setContent(`
+      #layer {
+        marker-width: 7;
+        marker-fill-opacity: 0.5;
+        marker-allow-overlap: true;
+        marker-line-width: 0;
+        marker-fill: rgb(51, 128, 158);
+      }
+      
+      #layer {
+        [commute_driving = null] {
+          marker-width: 0;
+        }
+        [commute_driving > 0] {
+          marker-fill: #d0d1e6;
+        }
+        [commute_driving > 1200] {
+          marker-fill: #a6bddb;
+        }
+        [commute_driving > 2400] {
+          marker-fill: #74a9cf;
+        }
+        [commute_driving > 3600] {
+          marker-fill: #2b8cbe;
+        }
+        [commute_driving > 4800] {
+          marker-fill: #045a8d;
+        }
+      }
+    `);
+                } else {
+                    transportationButtons[0].classList.add("active");
+                    transportationButtons[1].classList.remove("active");
+
+                    source.setQuery(`
+          SELECT *
+            FROM random_points_driving_copenhagen_diff_1
             WHERE durationinseconds <= ${selectedSeconds}
         `);
+
+                    style.setContent(`
+                    #layer {
+                      marker-width: 7;
+                      marker-fill-opacity: 0.5;
+                      marker-allow-overlap: true;
+                      marker-line-width: 0;
+                      marker-fill: rgb(51, 128, 158);
+                    }
+                    
+                    #layer {
+                      [durationinseconds > 0] {
+                        marker-fill: #d0d1e6;
+                      }
+                      [durationinseconds > 1200] {
+                        marker-fill: #a6bddb;
+                      }
+                      [durationinseconds > 2400] {
+                        marker-fill: #74a9cf;
+                      }
+                      [durationinseconds > 3600] {
+                        marker-fill: #2b8cbe;
+                      }
+                      [durationinseconds > 4800] {
+                        marker-fill: #045a8d;
+                      }
+                    }
+                  `);
+                }
+            }
+        );
     });
 
     const style = new window.carto.style.CartoCSS(`
@@ -84,7 +234,11 @@ export default function() {
     `);
 
     const layer = new window.carto.layer.Layer(source, style);
+    const houseSalesLayer = new window.carto.layer.Layer(
+        houseSalesSource,
+        houseSalesStyle
+    );
 
-    client.addLayer(layer);
+    client.addLayers([houseSalesLayer, layer]);
     client.getLeafletLayer().addTo(pointsMap);
 }

@@ -6,11 +6,11 @@ export default function() {
     const houseSalesMap = window.L.map("house-sales").setView([55.7, 12.5], 9);
     houseSalesMap.scrollWheelZoom.disable();
     console.log(houseSalesMap._onResize);
-    const defaultMarkerWidth = 3;
+    const defaultMarkerWidth = 7;
     const randomPointsStyle = new window.carto.style.CartoCSS(`
     #layer {
       marker-width: ${defaultMarkerWidth};
-      marker-fill-opacity: 0.3;
+      marker-fill-opacity: 0.05;
       marker-allow-overlap: true;
       marker-line-width: 0;
       marker-fill: rgb(51, 128, 158);
