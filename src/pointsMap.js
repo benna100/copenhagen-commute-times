@@ -29,7 +29,7 @@ export default function() {
     });
 
     const source = new window.carto.source.SQL(
-        "SELECT * FROM random_points_driving_copenhagen_diff_1"
+        "SELECT * FROM random_points_driving_copenhagen_diff"
     );
 
     const hexagonSizes = 15;
@@ -56,7 +56,7 @@ export default function() {
 
     const houseSalesStyle = new window.carto.style.CartoCSS(`
     #layer {
-      polygon-opacity: 0.74;
+      polygon-opacity: 0;
 
       [agg_value > 0] {
         polygon-fill: #fcbba1;
@@ -96,6 +96,12 @@ export default function() {
         ".transportation-wrapper button"
     );
 
+    const houseSalesLegend = document.querySelector(".legend.house-sales");
+
+    const houseSalesToggleButtons = document.querySelectorAll(
+        ".house-sales-wrapper button"
+    );
+
     let selectedSeconds;
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
@@ -109,12 +115,11 @@ export default function() {
 
         source.setQuery(`
           SELECT *
-            FROM random_points_driving_copenhagen_diff_1
+            FROM random_points_driving_copenhagen_diff
             WHERE ${columnToFilter} <= ${selectedSeconds}
         `);
     });
 
-    let activeButton;
     [...transportationButtons].forEach(transportationButton => {
         transportationButton.addEventListener(
             "click",
@@ -129,7 +134,7 @@ export default function() {
 
                     source.setQuery(`
                       SELECT *
-                        FROM random_points_driving_copenhagen_diff_1
+                        FROM random_points_driving_copenhagen_diff
                         WHERE commute_driving <= ${selectedSeconds}
                     `);
 
@@ -169,7 +174,7 @@ export default function() {
 
                     source.setQuery(`
           SELECT *
-            FROM random_points_driving_copenhagen_diff_1
+            FROM random_points_driving_copenhagen_diff
             WHERE durationinseconds <= ${selectedSeconds}
         `);
 
@@ -200,6 +205,49 @@ export default function() {
                       }
                     }
                   `);
+                }
+            }
+        );
+    });
+
+    [...houseSalesToggleButtons].forEach(houseSalesToggleButton => {
+        houseSalesToggleButton.addEventListener(
+            "click",
+            houseSalesButtonEvent => {
+                if (houseSalesButtonEvent.target.className.includes("off")) {
+                    houseSalesLegend.classList.add("hidden");
+                    houseSalesToggleButtons[0].classList.remove("active");
+                    houseSalesToggleButtons[1].classList.add("active");
+
+                    houseSalesStyle.setContent(`
+                    polygon-opacity: 0;
+                    `);
+                } else {
+                    houseSalesLegend.classList.remove("hidden");
+                    houseSalesToggleButtons[0].classList.add("active");
+                    houseSalesToggleButtons[1].classList.remove("active");
+
+                    houseSalesStyle.setContent(`
+                    #layer {
+                      polygon-opacity: 0.74;
+                
+                      [agg_value > 0] {
+                        polygon-fill: #fcbba1;
+                      }
+                      [agg_value > 1500000] {
+                        polygon-fill: #fc9272;
+                      }
+                      [agg_value > 3000000] {
+                        polygon-fill: #fb6a4a;
+                      }
+                      [agg_value > 4500000] {
+                        polygon-fill: #de2d26;
+                      }
+                      [agg_value > 6000000] {
+                        polygon-fill: #a50f15;
+                      }
+                    }
+                `);
                 }
             }
         );

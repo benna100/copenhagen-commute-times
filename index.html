@@ -71,21 +71,20 @@
                 <strong>
                     How can I find areas close to Copenhagen that have cheap
                     houses </strong
-                >. To answer this question I made two maps.
+                >. To answer this question I made a map!
             </p>
             <p>
-                The first map shows how far from Copenhagen you can live and
+                The blue dots show how far from Copenhagen you can live and
                 still arrive at
-                <strong
-                    >Hovedbanegården at 9:00 AM monday morning with public
-                    transportation</strong
-                >.
+                <strong>Hovedbanegården at 9:00 AM monday morning</strong>.
             </p>
-
             <p>
-                <strong>The blue dots</strong> are
-                <strong>randomly generated points</strong>
-                within the set commute time.
+                💡🕵️ If you want to find an
+                <strong>area with cheap houses</strong> show the house prices
+                map and look for the
+                <strong>lighter colored red areas</strong> with
+                <strong>blue dots inside</strong>
+                of them. <a href="#cheap-house-55-min">See examples</a>
             </p>
             <section class="points-map">
                 <div class="points-map-container">
@@ -98,6 +97,16 @@
                             <li>40 min - 1 hour</li>
                             <li>1 hour - 1 hour 20 min</li>
                             <li>More than 1 hour 20 min</li>
+                        </ul>
+                    </div>
+                    <div class="legend house-sales hidden">
+                        <p>Averaged house prices</p>
+                        <ul>
+                            <li>0 - 1.5 million</li>
+                            <li>1.5 - 3 million</li>
+                            <li>3 - 4.5 million</li>
+                            <li>4.5 - 6 million</li>
+                            <li>More than 6 million</li>
                         </ul>
                     </div>
                 </div>
@@ -113,47 +122,11 @@
                         <button class="public active">Public 🚌</button>
                         <button class="driving">Car 🚗</button>
                     </div>
-                    <p>Show house prices</p>
-                    <input type="checkbox" class="house-prices" />
-                </div>
-            </section>
-
-            <section class="house-sales-map">
-                <p>
-                    The second map shows averaged house prices (the red colored
-                    areas) that are based on
-                    <strong>standalone houses sold in 2018 and 2019</strong>.
-                    <strong>The blue dots</strong> are as the map above
-                    <strong>randomly generated points</strong>
-                    within the set commute time.
-                    <br />
-                    <br />
-                    💡🕵️ If you want to find an
-                    <strong>area with cheap houses</strong>, look for the
-                    <strong>lighter colored areas</strong> with
-                    <strong>blue dots inside</strong>
-                    of them. <a href="#cheap-house-55-min">See examples</a>
-                </p>
-                <div class="house-sales-container">
-                    <div id="house-sales"></div>
-                    <div class="legend">
-                        <p>Averaged house prices</p>
-                        <ul>
-                            <li>0 - 1.5 million</li>
-                            <li>1.5 - 3 million</li>
-                            <li>3 - 4.5 million</li>
-                            <li>4.5 - 6 million</li>
-                            <li>More than 6 million</li>
-                            <li>Point within commute time</li>
-                        </ul>
+                    <p>House prices</p>
+                    <div class="house-sales-wrapper">
+                        <button class="on">Shown 🌕</button>
+                        <button class="off active">Hidden 🌑</button>
                     </div>
-                </div>
-
-                <div class="slider-container duration">
-                    <p>
-                        Commute time: Up to <strong><span></span></strong>
-                    </p>
-                    <div class="slider duration"></div>
                 </div>
             </section>
 
@@ -226,8 +199,78 @@
                     >
                 </p>
                 <p>
-                    I am not paid by anyone to do this (though I wish I were)
+                    This is something I have built simply because I think it
+                    would <strong> be helpful for other people</strong>. I have
+                    spent <strong> quite a lot of time on it</strong>. So if you
+                    would like to support me that would be much appreciated 😃👍
                 </p>
+
+                <style>
+                    .bmc-button img {
+                        width: 35px !important;
+                        margin-bottom: 1px !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        vertical-align: middle !important;
+                    }
+                    .bmc-button {
+                        padding: 7px 10px 7px 10px !important;
+                        line-height: 35px !important;
+                        height: 51px !important;
+                        min-width: 217px !important;
+                        text-decoration: none !important;
+                        display: inline-flex !important;
+                        color: #ffffff !important;
+                        background-color: #ff813f !important;
+                        border-radius: 5px !important;
+                        border: 1px solid transparent !important;
+                        padding: 7px 10px 7px 10px !important;
+                        font-size: 20px !important;
+                        letter-spacing: -0.08px !important;
+                        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;
+                        -webkit-box-shadow: 0px 1px 2px 2px
+                            rgba(190, 190, 190, 0.5) !important;
+                        margin: 0 auto !important;
+                        font-family: "Lato", sans-serif !important;
+                        -webkit-box-sizing: border-box !important;
+                        box-sizing: border-box !important;
+                        -o-transition: 0.3s all linear !important;
+                        -webkit-transition: 0.3s all linear !important;
+                        -moz-transition: 0.3s all linear !important;
+                        -ms-transition: 0.3s all linear !important;
+                        transition: 0.3s all linear !important;
+                    }
+                    .bmc-button:hover,
+                    .bmc-button:active,
+                    .bmc-button:focus {
+                        -webkit-box-shadow: 0px 1px 2px 2px
+                            rgba(190, 190, 190, 0.5) !important;
+                        text-decoration: none !important;
+                        box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+                        opacity: 0.85 !important;
+                        color: #ffffff !important;
+                    }</style
+                ><link
+                    href="https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext"
+                    rel="stylesheet"
+                /><a
+                    class="bmc-button"
+                    target="_blank"
+                    href="https://www.buymeacoffee.com/EPjnsvp"
+                    ><img
+                        src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+                        alt="Buy me a coffee"
+                    /><span style="margin-left:15px;font-size:19px !important;"
+                        >Buy me a coffee</span
+                    ></a
+                >
+
+                <!-- <p>
+                    To find areas with cheap houses, show the house prices. They
+                    shows averaged house prices (the red colored areas) that are
+                    based on
+                    <strong>standalone houses sold in 2018 and 2019</strong>.
+                </p> -->
             </section>
         </main>
     </body>

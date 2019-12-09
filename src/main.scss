@@ -59,6 +59,10 @@ img {
     margin-top: 12px;
     margin-bottom: 12px;
 
+    p {
+        margin-bottom: 4px;
+    }
+
     @media screen and (min-width: 450px) {
         position: absolute;
         bottom: 6px;
@@ -76,7 +80,8 @@ img {
         margin-bottom: 18px;
     }
 
-    .transportation-wrapper {
+    .transportation-wrapper,
+    .house-sales-wrapper {
         display: flex;
         justify-content: space-around;
         margin-bottom: 12px;
@@ -158,7 +163,15 @@ img {
     }
 }
 
-.house-sales-map .legend ul li {
+.legend.house-sales {
+    width: 235px;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.legend.house-sales ul li {
     &:nth-child(1)::before {
         background-color: #fcbba1;
     }

@@ -8,6 +8,7 @@ module.exports = {
     devServer: {
         // access from mobile on same network
         //host: '192.168.1.1', <-- your ip here
+        host: "192.168.1.122",
         port: 8080,
         contentBase: path.join(__dirname, "dist")
     },
