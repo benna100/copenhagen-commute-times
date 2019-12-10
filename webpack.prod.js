@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const SocialTags = require("social-tags-webpack-plugin");
+const CnameWebpackPlugin = require("cname-webpack-plugin");
 
 const buildPath = path.resolve(__dirname, "dist");
 
@@ -133,30 +134,31 @@ module.exports = {
             canPrint: true
         }),
         new SocialTags({
-            appUrl: "https://benna100.github.io/copenhagen-commute-times/",
+            appUrl: "https://billige-boliger.nu",
             facebook: {
                 "fb:app_id": "123456789",
-                "og:url":
-                    "https://benna100.github.io/copenhagen-commute-times/",
+                "og:url": "https://billige-boliger.nu",
                 "og:type": "website",
-                "og:title": "Copenhagen commute times",
+                "og:title": "Billige boliger med kort pendlertid",
                 "og:image": "./src/assets/social-facebook.png",
                 "og:description":
-                    "How long will it take to travel to Copenhagen with public transportation?",
-                "og:site_name": "Copenhagen commute times",
+                    "Find områder med billige boliger og kort pendlertid",
+                "og:site_name": "Billige boliger med kort pendlertid",
                 "og:locale": "da",
                 "og:article:author": "Benjamin Hughes"
             },
             twitter: {
                 "twitter:card": "summary_large_image",
                 "twitter:creator": "@dalshughes",
-                "twitter:url":
-                    "https://benna100.github.io/copenhagen-commute-times/",
-                "twitter:title": "Copenhagen commute times",
+                "twitter:url": "https://billige-boliger.nu",
+                "twitter:title": "Billige boliger med kort pendlertid",
                 "twitter:description":
-                    "How long will it take to travel to Copenhagen with public transportation?",
+                    "Find områder med billige boliger og kort pendlertid",
                 "twitter:image": "./src/assets/social-twitter.png"
             }
+        }),
+        new CnameWebpackPlugin({
+            domain: "billige-boliger.nu"
         })
     ]
 };
