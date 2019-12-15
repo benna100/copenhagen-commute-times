@@ -77,6 +77,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./index.html",
             inject: true
+        }),
+        new HtmlWebpackPlugin({
+            // Also generate a test.html
+            filename: "analysis.html",
+            template: "./src/pages/analysis.html"
         })
     ]
 };

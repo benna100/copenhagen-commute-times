@@ -87,6 +87,11 @@ module.exports = {
             // Inject the js bundle at the end of the body of the given template
             inject: "body"
         }),
+        new HtmlWebpackPlugin({
+            // Also generate a test.html
+            filename: "analysis.html",
+            template: "./src/pages/analysis.html"
+        }),
         new CleanWebpackPlugin(buildPath),
         new FaviconsWebpackPlugin({
             // Your source logo

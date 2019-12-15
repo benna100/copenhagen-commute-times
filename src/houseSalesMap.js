@@ -67,30 +67,6 @@ export default function() {
         "SELECT * FROM distances"
     );
 
-    // #layer {
-    //   [durationinseconds > 0] {
-    //     marker-fill: #ecda9a;
-    //   }
-    //   [durationinseconds > 1200] {
-    //     marker-fill: #efc47e;
-    //   }
-    //   [durationinseconds > 2400] {
-    //     marker-fill: #f3ad6a;
-    //   }
-    //   [durationinseconds > 3600] {
-    //     marker-fill: #f7945d;
-    //   }
-    //   [durationinseconds > 4800] {
-    //     marker-fill: #f97b57;
-    //   }
-    //   [durationinseconds > 6000] {
-    //     marker-fill: #f66356;
-    //   }
-    //   [durationinseconds > 7200] {
-    //     marker-fill: #ee4d5a;
-    //   }
-    // }
-
     const source = new window.carto.source.SQL(`
           -- Create hexagon grid
           WITH hgrid AS (
@@ -138,26 +114,6 @@ export default function() {
           FROM distances
           WHERE durationinseconds <= ${selectedDuration}
       `);
-        // source.setQuery(`
-        // -- Create hexagon grid
-        // WITH hgrid AS (
-        //     SELECT CDB_HexagonGrid(
-        //         ST_Expand(!bbox!, CDB_XYZ_Resolution(9) * ${hexagonSizes}),
-        //         CDB_XYZ_Resolution(9) * ${hexagonSizes}) as cell
-        //     )
-
-        // -- select the data from the "virtual table" hgrid, which has been created
-        // -- using the "WITH" statement of PostgreSQL,
-        // -- that intesects with the dataset of points "stormevents_locations_2014"
-
-        // SELECT  hgrid.cell as the_geom_webmercator,
-        //         avg(price) as agg_value,
-        //         row_number() over () as cartodb_id
-        // FROM hgrid, (SELECT * FROM house_sales_with_combined_scoring) i
-        // WHERE ST_Intersects(i.the_geom_webmercator, hgrid.cell) AND duration <= ${selectedDuration} AND priceAndCommuteScoring != 0
-        // GROUP BY hgrid.cell
-
-        // `);
     });
 
     const style = new window.carto.style.CartoCSS(`

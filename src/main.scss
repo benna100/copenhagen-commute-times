@@ -19,7 +19,7 @@ main {
 
 h1,
 h2 {
-    color: black;
+    color: #1d2d35;
 }
 
 h1 {
@@ -60,6 +60,92 @@ strong.highlight {
     color: white;
     background-color: black;
     padding: 4px 2px;
+}
+
+.map-active {
+    span {
+        font-size: 0.9rem;
+        color: lightgrey;
+
+        &.active {
+            color: #1d2d35;
+        }
+    }
+    .switch {
+        margin-top: 6px;
+        margin-bottom: -3px;
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        background-color: rgba(0, 0, 0, 0.25);
+        border-radius: 20px;
+        transition: all 0.3s;
+    }
+    .switch::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: white;
+        top: 1px;
+        left: 1px;
+        transition: all 0.3s;
+    }
+
+    .checkbox:checked + .switch::after {
+        left: 20px;
+    }
+    .checkbox:checked + .switch {
+        background-color: #7983ff;
+    }
+    .checkbox {
+        display: none;
+    }
+}
+
+.select-city {
+    margin-bottom: 36px;
+
+    p {
+        text-align: center;
+    }
+    ul {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 12px;
+
+        @media screen and (max-width: 450px) {
+            flex-direction: column;
+        }
+
+        li:nth-child(1) {
+            margin-right: 8px;
+
+            @media screen and (max-width: 450px) {
+                margin-right: 0px;
+                margin-bottom: 8px;
+            }
+        }
+
+        button {
+            width: 200px;
+            display: block;
+            background-color: transparent;
+            border: 1px lightgrey solid;
+            padding: 12px 16px;
+            border-radius: 4px;
+
+            &.active {
+                background-color: lightgrey;
+            }
+
+            @media screen and (max-width: 450px) {
+                width: 100%;
+            }
+        }
+    }
 }
 
 .slider-container {

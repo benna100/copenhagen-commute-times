@@ -32,6 +32,10 @@ export default function() {
         "SELECT * FROM random_points_driving_copenhagen_diff"
     );
 
+    const aarhusSource = new window.carto.source.SQL(
+        "SELECT * FROM random_points_driving_copenhagen_diff"
+    );
+
     const hexagonSizes = 15;
     const houseSalesSource = new window.carto.source.SQL(`
           -- Create hexagon grid
@@ -56,7 +60,7 @@ export default function() {
 
     const houseSalesStyle = new window.carto.style.CartoCSS(`
     #layer {
-      polygon-opacity: 0;
+      polygon-opacity: 0.74;
 
       [agg_value > 0] {
         polygon-fill: #fcbba1;
@@ -76,6 +80,52 @@ export default function() {
     }
 
         `);
+
+    const mapToggleLabel = document.querySelector(".map-active label");
+    const mapToggleInput = document.querySelector(".map-active input");
+    const scrollPageSpan = document.querySelector(
+        ".map-active span.scroll-page"
+    );
+
+    function setCheckbox(setChecked) {
+        mapToggleInput.checked = setChecked;
+    }
+
+    pointsMap.on("zoom", () => {
+        setMapActiveOrNot(true);
+    });
+
+    function setMapActiveOrNot(activeOrNot) {
+        if (activeOrNot) {
+            scrollMapSpan.classList.add("active");
+            pointsMapElement.style.pointerEvents = "auto";
+            setCheckbox(true);
+        } else {
+            scrollPageSpan.classList.add("active");
+            pointsMapElement.style.pointerEvents = "none";
+            setCheckbox(false);
+        }
+    }
+
+    const scrollMapSpan = document.querySelector(".map-active span.scroll-map");
+    const pointsMapElement = document.querySelector("#points-map");
+    document
+        .querySelector(".points-map-container")
+        .addEventListener("touchmove", handleMove, false);
+    function handleMove(evt) {
+        var touches = evt.changedTouches;
+        if (touches.length > 1) {
+            setMapActiveOrNot(true);
+        }
+    }
+    pointsMapElement.style.pointerEvents = "none";
+    mapToggleInput.addEventListener("change", () => {
+        scrollPageSpan.classList.remove("active");
+        scrollMapSpan.classList.remove("active");
+        const scrollMap = mapToggleInput.checked;
+
+        setMapActiveOrNot(scrollMap);
+    });
 
     const slider = document.querySelector(".points-map .slider");
 
@@ -102,6 +152,52 @@ export default function() {
         ".house-sales-wrapper button"
     );
 
+    const selectCityButtons = document.querySelectorAll(
+        ".select-city > ul > li > button"
+    );
+    const aarhusStyle = new window.carto.style.CartoCSS(`
+    #layer {
+      marker-width: 7;
+      marker-fill-opacity: 0.5;
+      marker-allow-overlap: true;
+      marker-line-width: 0;
+      marker-fill: rgb(51, 128, 158);
+    }
+    
+    #layer {
+      [durationinseconds > 0] {
+        marker-fill: #d0d1e6;
+      }
+      [durationinseconds > 1200] {
+        marker-fill: #a6bddb;
+      }
+      [durationinseconds > 2400] {
+        marker-fill: #74a9cf;
+      }
+      [durationinseconds > 3600] {
+        marker-fill: #2b8cbe;
+      }
+      [durationinseconds > 4800] {
+        marker-fill: #045a8d;
+      }
+    }
+  `);
+    const aarhusLayer = new window.carto.layer.Layer(aarhusSource, aarhusStyle);
+    aarhusLayer.hide();
+
+    toggleButtons([...selectCityButtons], key => {
+        if (key === "copenhagen") {
+            pointsMap.flyTo([55.672554, 12.566271]);
+            aarhusLayer.hide();
+            layer.show();
+        }
+        if (key === "aarhus") {
+            pointsMap.flyTo([56.150705, 10.204396]);
+            aarhusLayer.show();
+            layer.hide();
+        }
+    });
+
     let selectedSeconds;
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
@@ -120,25 +216,35 @@ export default function() {
         `);
     });
 
-    [...transportationButtons].forEach(transportationButton => {
-        transportationButton.addEventListener(
-            "click",
-            transportationButtonEvent => {
-                if (
-                    transportationButtonEvent.target.className.includes(
-                        "driving"
-                    )
-                ) {
-                    transportationButtons[0].classList.remove("active");
-                    transportationButtons[1].classList.add("active");
+    function toggleButtons(buttonElements, onButtonClick) {
+        buttonElements.forEach(buttonElement => {
+            buttonElement.addEventListener("click", buttonElementEvent => {
+                resetActiveButtons(buttonElements);
 
-                    source.setQuery(`
+                const target = buttonElementEvent.target;
+                target.classList.add("active");
+
+                const key = target.getAttribute("data-key");
+                onButtonClick(key);
+            });
+        });
+    }
+
+    function resetActiveButtons(buttonElements) {
+        buttonElements.forEach(buttonElement => {
+            buttonElement.classList.remove("active");
+        });
+    }
+
+    toggleButtons([...transportationButtons], key => {
+        if (key === "driving") {
+            source.setQuery(`
                       SELECT *
                         FROM random_points_driving_copenhagen_diff
                         WHERE commute_driving <= ${selectedSeconds}
                     `);
 
-                    style.setContent(`
+            style.setContent(`
       #layer {
         marker-width: 7;
         marker-fill-opacity: 0.5;
@@ -168,17 +274,16 @@ export default function() {
         }
       }
     `);
-                } else {
-                    transportationButtons[0].classList.add("active");
-                    transportationButtons[1].classList.remove("active");
+        }
 
-                    source.setQuery(`
+        if (key === "public") {
+            source.setQuery(`
           SELECT *
             FROM random_points_driving_copenhagen_diff
             WHERE durationinseconds <= ${selectedSeconds}
         `);
 
-                    style.setContent(`
+            style.setContent(`
                     #layer {
                       marker-width: 7;
                       marker-fill-opacity: 0.5;
@@ -205,52 +310,7 @@ export default function() {
                       }
                     }
                   `);
-                }
-            }
-        );
-    });
-
-    [...houseSalesToggleButtons].forEach(houseSalesToggleButton => {
-        houseSalesToggleButton.addEventListener(
-            "click",
-            houseSalesButtonEvent => {
-                if (houseSalesButtonEvent.target.className.includes("off")) {
-                    houseSalesLegend.classList.add("hidden");
-                    houseSalesToggleButtons[0].classList.remove("active");
-                    houseSalesToggleButtons[1].classList.add("active");
-
-                    houseSalesStyle.setContent(`
-                    polygon-opacity: 0;
-                    `);
-                } else {
-                    houseSalesLegend.classList.remove("hidden");
-                    houseSalesToggleButtons[0].classList.add("active");
-                    houseSalesToggleButtons[1].classList.remove("active");
-
-                    houseSalesStyle.setContent(`
-                    #layer {
-                      polygon-opacity: 0.74;
-                
-                      [agg_value > 0] {
-                        polygon-fill: #fcbba1;
-                      }
-                      [agg_value > 1500000] {
-                        polygon-fill: #fc9272;
-                      }
-                      [agg_value > 3000000] {
-                        polygon-fill: #fb6a4a;
-                      }
-                      [agg_value > 4500000] {
-                        polygon-fill: #de2d26;
-                      }
-                      [agg_value > 6000000] {
-                        polygon-fill: #a50f15;
-                      }
-                    }
-                `);
-                }
-            }
-        );
+        }
     });
 
     const style = new window.carto.style.CartoCSS(`
@@ -287,6 +347,18 @@ export default function() {
         houseSalesStyle
     );
 
-    client.addLayers([houseSalesLayer, layer]);
+    houseSalesLayer.hide();
+
+    toggleButtons([...houseSalesToggleButtons], key => {
+        if (key === "off") {
+            houseSalesLayer.hide();
+        }
+
+        if (key === "on") {
+            houseSalesLayer.show();
+        }
+    });
+
+    client.addLayers([houseSalesLayer, layer, aarhusLayer]);
     client.getLeafletLayer().addTo(pointsMap);
 }

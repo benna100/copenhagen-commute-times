@@ -68,20 +68,20 @@
     <body>
         <main>
             <h1>
-                Billige-boliger.nu - Find områder med billige boliger tæt på
-                København
+                Billige-boliger.nu - Find områder med billige boliger tæt på en
+                storby
             </h1>
             <p>
                 Min kæreste og jeg har den seneste tid
                 <strong
-                    >kigget efter boliger i kort pendlerafstand til
-                    København.</strong
+                    >kigget efter boliger i kort pendlerafstand til en
+                    storby.</strong
                 >
                 Et spørgsmål jeg blev ved med at stille mig selv var:
             </p>
             <p>
                 <strong class="highlight">
-                    Hvordan kan jeg finde områder tæt på København med billige
+                    Hvordan kan jeg finde områder tæt på en storby med billige
                     boliger?</strong
                 >
             </p>
@@ -89,12 +89,24 @@
                 For at svare på netop det spørgsmål har jeg lavet et kort 🗺️
                 👇👇👇
             </p>
+            <br />
+            <div class="select-city">
+                <p><strong>Vælg by</strong></p>
+                <ul>
+                    <li>
+                        <button data-key="copenhagen" class="active">
+                            København
+                        </button>
+                    </li>
+                    <li><button data-key="aarhus">Århus</button></li>
+                </ul>
+            </div>
 
             <section class="points-map">
                 <div class="points-map-container">
                     <div id="points-map"></div>
                     <div class="legend">
-                        <p>Rejsetid til København</p>
+                        <p>Rejsetid</p>
                         <ul>
                             <li>0 - 20 min</li>
                             <li>20 - 40 min</li>
@@ -113,6 +125,12 @@
                             <li>Mere end 6 millioner</li>
                         </ul>
                     </div>
+                    <div class="map-active">
+                        <span class="scroll-page active">Scrolle på siden</span>
+                        <input type="checkbox" id="toggle" class="checkbox" />
+                        <label for="toggle" class="switch"></label>
+                        <span class="scroll-map">Scrolle på kortet</span>
+                    </div>
                 </div>
 
                 <div class="slider-container">
@@ -123,13 +141,15 @@
 
                     <p>Transportmiddel</p>
                     <div class="transportation-wrapper">
-                        <button class="public active">Offentlig 🚌🚆</button>
-                        <button class="driving">Bil 🚗</button>
+                        <button data-key="public" class="active">
+                            Offentlig 🚌🚆
+                        </button>
+                        <button data-key="driving">Bil 🚗</button>
                     </div>
                     <p>Boligpriser</p>
                     <div class="house-sales-wrapper">
-                        <button class="on">Vist 🌕</button>
-                        <button class="off active">Skjult 🌑</button>
+                        <button data-key="on">Vist 🌕</button>
+                        <button data-key="off" class="active">Skjult 🌑</button>
                     </div>
                 </div>
             </section>
@@ -145,7 +165,7 @@
                 </p>
                 <p>
                     Boligpriserne er baseret på
-                    <strong>boliger solgt i 2018 og 2019</strong>.
+                    <strong>huse solgt i 2018 og 2019</strong>.
                 </p>
                 <p>
                     💡🕵️ Hvis du vil finde de
