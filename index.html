@@ -75,7 +75,7 @@
                 Min kæreste og jeg har den seneste tid
                 <strong
                     >kigget efter boliger i kort pendlerafstand til en
-                    storby.</strong
+                    København.</strong
                 >
                 Et spørgsmål jeg blev ved med at stille mig selv var:
             </p>
@@ -90,7 +90,7 @@
                 👇👇👇
             </p>
             <br />
-            <div class="select-city">
+            <!-- <div class="select-city">
                 <p><strong>Vælg by</strong></p>
                 <ul>
                     <li>
@@ -100,9 +100,15 @@
                     </li>
                     <li><button data-key="aarhus">Århus</button></li>
                 </ul>
-            </div>
+            </div> -->
 
             <section class="points-map">
+                <div class="map-active hidden">
+                    <span class="scroll-page active">Scrolle på siden</span>
+                    <input type="checkbox" id="toggle" class="checkbox" />
+                    <label for="toggle" class="switch"></label>
+                    <span class="scroll-map">Scrolle på kortet</span>
+                </div>
                 <div class="points-map-container">
                     <div id="points-map"></div>
                     <div class="legend">
@@ -125,17 +131,12 @@
                             <li>Mere end 6 millioner</li>
                         </ul>
                     </div>
-                    <div class="map-active">
-                        <span class="scroll-page active">Scrolle på siden</span>
-                        <input type="checkbox" id="toggle" class="checkbox" />
-                        <label for="toggle" class="switch"></label>
-                        <span class="scroll-map">Scrolle på kortet</span>
-                    </div>
                 </div>
 
                 <div class="slider-container">
-                    <p>
-                        <strong>Pendlertid</strong>: Op til <strong><span></span></strong>
+                    <p class="commute-slider">
+                        <strong>Pendlertid</strong>: Op til
+                        <strong><span></span></strong>
                     </p>
                     <div class="slider"></div>
 
@@ -164,15 +165,15 @@
                     >
                 </p>
                 <p>
-                    Boligpriserne er baseret på
-                    <strong>huse solgt i 2018 og 2019</strong>.
-                </p>
-                <p>
                     💡🕵️ Hvis du vil finde de
                     <strong>områder med billige boliger</strong> så kig efter
                     <strong>de lysere røde områder</strong> med
                     <strong>blå prikker indeni.</strong>
                     <a href="#cheap-house-55-min">Se eksempler</a>
+                </p>
+                <p>
+                    Boligpriserne er baseret på
+                    <strong>huse solgt i 2018 og 2019</strong>.
                 </p>
                 <br />
             </section>

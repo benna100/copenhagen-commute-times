@@ -4,6 +4,10 @@ import "nouislider/distribute/nouislider.css";
 export default function() {
     const pointsMap = window.L.map("points-map").setView([55.7, 12.5], 9);
     pointsMap.scrollWheelZoom.disable();
+    // console.log(pointsMap);
+    pointsMap.on("doubleClick", () => {
+        console.log(9);
+    });
 
     window.L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
@@ -91,42 +95,87 @@ export default function() {
         mapToggleInput.checked = setChecked;
     }
 
-    pointsMap.on("zoom", () => {
-        setMapActiveOrNot(true);
-    });
-
-    function setMapActiveOrNot(activeOrNot) {
-        if (activeOrNot) {
-            scrollMapSpan.classList.add("active");
-            pointsMapElement.style.pointerEvents = "auto";
-            setCheckbox(true);
-        } else {
-            scrollPageSpan.classList.add("active");
-            pointsMapElement.style.pointerEvents = "none";
-            setCheckbox(false);
-        }
+    function is_touch_enabled() {
+        return (
+            "ontouchstart" in window ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msMaxTouchPoints > 0
+        );
     }
 
-    const scrollMapSpan = document.querySelector(".map-active span.scroll-map");
-    const pointsMapElement = document.querySelector("#points-map");
-    document
-        .querySelector(".points-map-container")
-        .addEventListener("touchmove", handleMove, false);
-    function handleMove(evt) {
-        var touches = evt.changedTouches;
-        if (touches.length > 1) {
+    const shouldActiveMapToggle = is_touch_enabled();
+    if (shouldActiveMapToggle) {
+        const activeMapElement = document.querySelector(".map-active");
+        activeMapElement.classList.remove("hidden");
+
+        const scrollMapSpan = document.querySelector(
+            ".map-active span.scroll-map"
+        );
+        const pointsMapElement = document.querySelector("#points-map");
+
+        [...document.querySelectorAll(".leaflet-control-zoom a")].forEach(
+            zoomButton => {
+                console.log(zoomButton);
+
+                zoomButton.addEventListener("click", () =>
+                    setMapActiveOrNot(true)
+                );
+            }
+        );
+
+        pointsMapElement.addEventListener("touchstart", tapHandler);
+
+        var tapedTwice = false;
+
+        function tapHandler(event) {
+            if (!tapedTwice) {
+                tapedTwice = true;
+                setTimeout(function() {
+                    tapedTwice = false;
+                }, 300);
+                return false;
+            }
+
+            //action on double tap goes below
             setMapActiveOrNot(true);
         }
+
+        function setMapActiveOrNot(activeOrNot) {
+            if (activeOrNot) {
+                scrollMapSpan.classList.add("active");
+                // pointsMapElement.style.pointerEvents = "auto";
+                // pointsMap.dragging._draggable._enabled = true;
+                pointsMap.dragging.enable();
+                setCheckbox(true);
+            } else {
+                scrollPageSpan.classList.add("active");
+                // pointsMapElement.style.pointerEvents = "none";
+                // pointsMap.dragging._draggable._enabled = false;
+                pointsMap.dragging.disable();
+                setCheckbox(false);
+            }
+        }
+
+        document
+            .querySelector(".points-map-container")
+            .addEventListener("touchmove", handleMove, false);
+        function handleMove(evt) {
+            var touches = evt.changedTouches;
+            if (touches.length > 1) {
+                setMapActiveOrNot(true);
+            }
+        }
+        pointsMap.dragging.disable();
+        // pointsMapElement.style.pointerEvents = "none";
+        // pointsMap.dragging._draggable._enabled = false;
+        mapToggleInput.addEventListener("change", () => {
+            scrollPageSpan.classList.remove("active");
+            scrollMapSpan.classList.remove("active");
+            const scrollMap = mapToggleInput.checked;
+
+            setMapActiveOrNot(scrollMap);
+        });
     }
-    pointsMapElement.style.pointerEvents = "none";
-    mapToggleInput.addEventListener("change", () => {
-        scrollPageSpan.classList.remove("active");
-        scrollMapSpan.classList.remove("active");
-        const scrollMap = mapToggleInput.checked;
-
-        setMapActiveOrNot(scrollMap);
-    });
-
     const slider = document.querySelector(".points-map .slider");
 
     noUiSlider.create(slider, {
@@ -152,9 +201,9 @@ export default function() {
         ".house-sales-wrapper button"
     );
 
-    const selectCityButtons = document.querySelectorAll(
-        ".select-city > ul > li > button"
-    );
+    // const selectCityButtons = document.querySelectorAll(
+    //     ".select-city > ul > li > button"
+    // );
     const aarhusStyle = new window.carto.style.CartoCSS(`
     #layer {
       marker-width: 7;
@@ -185,18 +234,18 @@ export default function() {
     const aarhusLayer = new window.carto.layer.Layer(aarhusSource, aarhusStyle);
     aarhusLayer.hide();
 
-    toggleButtons([...selectCityButtons], key => {
-        if (key === "copenhagen") {
-            pointsMap.flyTo([55.672554, 12.566271]);
-            aarhusLayer.hide();
-            layer.show();
-        }
-        if (key === "aarhus") {
-            pointsMap.flyTo([56.150705, 10.204396]);
-            aarhusLayer.show();
-            layer.hide();
-        }
-    });
+    // toggleButtons([...selectCityButtons], key => {
+    //     if (key === "copenhagen") {
+    //         pointsMap.flyTo([55.672554, 12.566271]);
+    //         aarhusLayer.hide();
+    //         layer.show();
+    //     }
+    //     if (key === "aarhus") {
+    //         pointsMap.flyTo([56.150705, 10.204396]);
+    //         aarhusLayer.show();
+    //         layer.hide();
+    //     }
+    // });
 
     let selectedSeconds;
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
@@ -352,9 +401,11 @@ export default function() {
     toggleButtons([...houseSalesToggleButtons], key => {
         if (key === "off") {
             houseSalesLayer.hide();
+            houseSalesLegend.classList.add("hidden");
         }
 
         if (key === "on") {
+            houseSalesLegend.classList.remove("hidden");
             houseSalesLayer.show();
         }
     });

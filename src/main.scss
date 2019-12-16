@@ -63,6 +63,10 @@ strong.highlight {
 }
 
 .map-active {
+    &.hidden {
+        display: none;
+    }
+
     span {
         font-size: 0.9rem;
         color: lightgrey;
@@ -71,9 +75,9 @@ strong.highlight {
             color: #1d2d35;
         }
     }
+
     .switch {
-        margin-top: 6px;
-        margin-bottom: -3px;
+        margin-bottom: -5px;
         position: relative;
         display: inline-block;
         width: 40px;
@@ -154,6 +158,10 @@ strong.highlight {
 
     p {
         margin-bottom: 4px;
+    }
+
+    p.commute-slider {
+        margin-bottom: 12px;
     }
 
     @media screen and (min-width: 450px) {
