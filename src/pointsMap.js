@@ -37,8 +37,10 @@ export default function() {
     );
 
     const aarhusSource = new window.carto.source.SQL(
-        "SELECT * FROM random_points_driving_copenhagen_diff"
+        "SELECT * FROM aarhus_commute_times WHERE commute_public > 0"
     );
+
+    let isCopenhagenMapShown = true;
 
     const hexagonSizes = 15;
     const houseSalesSource = new window.carto.source.SQL(`
@@ -57,7 +59,28 @@ export default function() {
                   avg(price) as agg_value,
                   row_number() over () as cartodb_id
           FROM hgrid, (SELECT * FROM house_sales_with_combined_scoring) i
-          WHERE ST_Intersects(i.the_geom_webmercator, hgrid.cell) AND priceAndCommuteScoring != 0
+          WHERE ST_Intersects(i.the_geom_webmercator, hgrid.cell) AND price != 0
+          GROUP BY hgrid.cell
+
+        `);
+
+    const houseSalesSourceAarhus = new window.carto.source.SQL(`
+          -- Create hexagon grid
+          WITH hgrid AS (
+              SELECT CDB_HexagonGrid(
+                  ST_Expand(!bbox!, CDB_XYZ_Resolution(9) * ${hexagonSizes}),
+                  CDB_XYZ_Resolution(9) * ${hexagonSizes}) as cell
+              )
+
+          -- select the data from the "virtual table" hgrid, which has been created
+          -- using the "WITH" statement of PostgreSQL,
+          -- that intesects with the dataset of points "stormevents_locations_2014"
+
+          SELECT  hgrid.cell as the_geom_webmercator,
+                  avg(price) as agg_value,
+                  row_number() over () as cartodb_id
+          FROM hgrid, (SELECT * FROM aarhus_house_sales) i
+          WHERE ST_Intersects(i.the_geom_webmercator, hgrid.cell) AND price != 0
           GROUP BY hgrid.cell
 
         `);
@@ -143,14 +166,10 @@ export default function() {
         function setMapActiveOrNot(activeOrNot) {
             if (activeOrNot) {
                 scrollMapSpan.classList.add("active");
-                // pointsMapElement.style.pointerEvents = "auto";
-                // pointsMap.dragging._draggable._enabled = true;
                 pointsMap.dragging.enable();
                 setCheckbox(true);
             } else {
                 scrollPageSpan.classList.add("active");
-                // pointsMapElement.style.pointerEvents = "none";
-                // pointsMap.dragging._draggable._enabled = false;
                 pointsMap.dragging.disable();
                 setCheckbox(false);
             }
@@ -166,8 +185,6 @@ export default function() {
             }
         }
         pointsMap.dragging.disable();
-        // pointsMapElement.style.pointerEvents = "none";
-        // pointsMap.dragging._draggable._enabled = false;
         mapToggleInput.addEventListener("change", () => {
             scrollPageSpan.classList.remove("active");
             scrollMapSpan.classList.remove("active");
@@ -201,69 +218,85 @@ export default function() {
         ".house-sales-wrapper button"
     );
 
-    // const selectCityButtons = document.querySelectorAll(
-    //     ".select-city > ul > li > button"
-    // );
-    const aarhusStyle = new window.carto.style.CartoCSS(`
-    #layer {
-      marker-width: 7;
-      marker-fill-opacity: 0.5;
-      marker-allow-overlap: true;
-      marker-line-width: 0;
-      marker-fill: rgb(51, 128, 158);
-    }
-    
-    #layer {
-      [durationinseconds > 0] {
-        marker-fill: #d0d1e6;
+    const selectCityButtons = document.querySelectorAll(
+        ".select-city > ul > li > button"
+    );
+
+    const style = new window.carto.style.CartoCSS(`
+      #layer {
+        marker-width: 7;
+        marker-fill-opacity: 0.5;
+        marker-allow-overlap: true;
+        marker-line-width: 0;
+        marker-fill: rgb(51, 128, 158);
       }
-      [durationinseconds > 1200] {
-        marker-fill: #a6bddb;
+      
+      #layer {
+        [commute_public > 0] {
+          marker-fill: #d0d1e6;
+        }
+        [commute_public > 1200] {
+          marker-fill: #a6bddb;
+        }
+        [commute_public > 2400] {
+          marker-fill: #74a9cf;
+        }
+        [commute_public > 3600] {
+          marker-fill: #2b8cbe;
+        }
+        [commute_public > 4800] {
+          marker-fill: #045a8d;
+        }
       }
-      [durationinseconds > 2400] {
-        marker-fill: #74a9cf;
-      }
-      [durationinseconds > 3600] {
-        marker-fill: #2b8cbe;
-      }
-      [durationinseconds > 4800] {
-        marker-fill: #045a8d;
-      }
-    }
-  `);
-    const aarhusLayer = new window.carto.layer.Layer(aarhusSource, aarhusStyle);
+    `);
+
+    const aarhusLayer = new window.carto.layer.Layer(aarhusSource, style);
     aarhusLayer.hide();
 
-    // toggleButtons([...selectCityButtons], key => {
-    //     if (key === "copenhagen") {
-    //         pointsMap.flyTo([55.672554, 12.566271]);
-    //         aarhusLayer.hide();
-    //         layer.show();
-    //     }
-    //     if (key === "aarhus") {
-    //         pointsMap.flyTo([56.150705, 10.204396]);
-    //         aarhusLayer.show();
-    //         layer.hide();
-    //     }
-    // });
-
     let selectedSeconds;
+    toggleButtons([...selectCityButtons], key => {
+        if (key === "copenhagen") {
+            isCopenhagenMapShown = true;
+            pointsMap.flyTo([55.672554, 12.566271]);
+            aarhusLayer.hide();
+            layer.show();
+        }
+        if (key === "aarhus") {
+            isCopenhagenMapShown = false;
+            pointsMap.flyTo([56.150705, 10.204396]);
+            aarhusLayer.show();
+            layer.hide();
+        }
+        updateCommuteTimesQuery(selectedSeconds);
+    });
+
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = secondsToHms(selectedSeconds);
 
+        updateCommuteTimesQuery(selectedSeconds);
+    });
+
+    function updateCommuteTimesQuery(selectedSeconds) {
         const columnToFilter = transportationButtons[0].className.includes(
             "active"
         )
-            ? "durationinseconds"
+            ? "commute_public"
             : "commute_driving";
-
-        source.setQuery(`
-          SELECT *
-            FROM random_points_driving_copenhagen_diff
-            WHERE ${columnToFilter} <= ${selectedSeconds}
-        `);
-    });
+        if (isCopenhagenMapShown) {
+            source.setQuery(`
+        SELECT *
+          FROM random_points_driving_copenhagen_diff
+          WHERE ${columnToFilter} <= ${selectedSeconds} and ${columnToFilter} > 0
+      `);
+        } else {
+            aarhusSource.setQuery(`
+        SELECT *
+          FROM aarhus_commute_times
+          WHERE ${columnToFilter} <= ${selectedSeconds} and ${columnToFilter} > 0
+      `);
+        }
+    }
 
     function toggleButtons(buttonElements, onButtonClick) {
         buttonElements.forEach(buttonElement => {
@@ -287,11 +320,19 @@ export default function() {
 
     toggleButtons([...transportationButtons], key => {
         if (key === "driving") {
-            source.setQuery(`
-                      SELECT *
-                        FROM random_points_driving_copenhagen_diff
-                        WHERE commute_driving <= ${selectedSeconds}
-                    `);
+            if (isCopenhagenMapShown) {
+                source.setQuery(`
+            SELECT *
+              FROM random_points_driving_copenhagen_diff
+              WHERE commute_driving <= ${selectedSeconds}
+          `);
+            } else {
+                aarhusSource.setQuery(`
+            SELECT *
+              FROM aarhus_commute_times
+              WHERE commute_driving <= ${selectedSeconds}
+          `);
+            }
 
             style.setContent(`
       #layer {
@@ -326,11 +367,19 @@ export default function() {
         }
 
         if (key === "public") {
-            source.setQuery(`
-          SELECT *
-            FROM random_points_driving_copenhagen_diff
-            WHERE durationinseconds <= ${selectedSeconds}
-        `);
+            if (isCopenhagenMapShown) {
+                source.setQuery(`
+            SELECT *
+              FROM random_points_driving_copenhagen_diff
+              WHERE commute_public <= ${selectedSeconds}
+          `);
+            } else {
+                aarhusSource.setQuery(`
+            SELECT *
+              FROM aarhus_commute_times
+              WHERE commute_public <= ${selectedSeconds}
+          `);
+            }
 
             style.setContent(`
                     #layer {
@@ -342,19 +391,19 @@ export default function() {
                     }
                     
                     #layer {
-                      [durationinseconds > 0] {
+                      [commute_public > 0] {
                         marker-fill: #d0d1e6;
                       }
-                      [durationinseconds > 1200] {
+                      [commute_public > 1200] {
                         marker-fill: #a6bddb;
                       }
-                      [durationinseconds > 2400] {
+                      [commute_public > 2400] {
                         marker-fill: #74a9cf;
                       }
-                      [durationinseconds > 3600] {
+                      [commute_public > 3600] {
                         marker-fill: #2b8cbe;
                       }
-                      [durationinseconds > 4800] {
+                      [commute_public > 4800] {
                         marker-fill: #045a8d;
                       }
                     }
@@ -362,54 +411,39 @@ export default function() {
         }
     });
 
-    const style = new window.carto.style.CartoCSS(`
-      #layer {
-        marker-width: 7;
-        marker-fill-opacity: 0.5;
-        marker-allow-overlap: true;
-        marker-line-width: 0;
-        marker-fill: rgb(51, 128, 158);
-      }
-      
-      #layer {
-        [durationinseconds > 0] {
-          marker-fill: #d0d1e6;
-        }
-        [durationinseconds > 1200] {
-          marker-fill: #a6bddb;
-        }
-        [durationinseconds > 2400] {
-          marker-fill: #74a9cf;
-        }
-        [durationinseconds > 3600] {
-          marker-fill: #2b8cbe;
-        }
-        [durationinseconds > 4800] {
-          marker-fill: #045a8d;
-        }
-      }
-    `);
-
     const layer = new window.carto.layer.Layer(source, style);
     const houseSalesLayer = new window.carto.layer.Layer(
         houseSalesSource,
         houseSalesStyle
     );
 
+    const houseSalesLayerAarhus = new window.carto.layer.Layer(
+        houseSalesSourceAarhus,
+        houseSalesStyle
+    );
+    houseSalesLayerAarhus.hide();
+
     houseSalesLayer.hide();
 
     toggleButtons([...houseSalesToggleButtons], key => {
         if (key === "off") {
             houseSalesLayer.hide();
+            houseSalesLayerAarhus.hide();
             houseSalesLegend.classList.add("hidden");
         }
 
         if (key === "on") {
             houseSalesLegend.classList.remove("hidden");
             houseSalesLayer.show();
+            houseSalesLayerAarhus.show();
         }
     });
 
-    client.addLayers([houseSalesLayer, layer, aarhusLayer]);
+    client.addLayers([
+        houseSalesLayer,
+        houseSalesLayerAarhus,
+        layer,
+        aarhusLayer
+    ]);
     client.getLeafletLayer().addTo(pointsMap);
 }
