@@ -57,9 +57,65 @@ function tapHandler(event) {
     setMapActiveOrNot(true);
 }
 
+function getHouseSalesStyling(opacity) {
+    return `
+    #layer {
+      polygon-opacity: ${opacity};
+
+      [agg_value > 0] {
+        polygon-fill: #fcbba1;
+      }
+      [agg_value > 1500000] {
+        polygon-fill: #fc9272;
+      }
+      [agg_value > 3000000] {
+        polygon-fill: #fb6a4a;
+      }
+      [agg_value > 4500000] {
+        polygon-fill: #de2d26;
+      }
+      [agg_value > 6000000] {
+        polygon-fill: #a50f15;
+      }
+    }
+        `;
+}
+
+function getPointsStyling(columnName) {
+    return `
+    #layer {
+      marker-width: 7;
+      marker-fill-opacity: 0.5;
+      marker-allow-overlap: true;
+      marker-line-width: 0;
+      marker-fill: rgb(51, 128, 158);
+    }
+    
+    #layer {
+      [${columnName} > 0] {
+        marker-fill: #d0d1e6;
+      }
+      [${columnName} > 1200] {
+        marker-fill: #a6bddb;
+      }
+      [${columnName} > 2400] {
+        marker-fill: #74a9cf;
+      }
+      [${columnName} > 3600] {
+        marker-fill: #2b8cbe;
+      }
+      [${columnName} > 4800] {
+        marker-fill: #045a8d;
+      }
+    }
+  `;
+}
+
 export default {
     isMobileDevice,
     isTouchEnabled,
     toggleButtons,
-    tapHandler
+    tapHandler,
+    getHouseSalesStyling,
+    getPointsStyling
 };

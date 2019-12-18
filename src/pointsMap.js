@@ -84,27 +84,9 @@ export default function() {
 
         `);
 
-    const houseSalesStyle = new window.carto.style.CartoCSS(`
-    #layer {
-      polygon-opacity: 0.74;
-
-      [agg_value > 0] {
-        polygon-fill: #fcbba1;
-      }
-      [agg_value > 1500000] {
-        polygon-fill: #fc9272;
-      }
-      [agg_value > 3000000] {
-        polygon-fill: #fb6a4a;
-      }
-      [agg_value > 4500000] {
-        polygon-fill: #de2d26;
-      }
-      [agg_value > 6000000] {
-        polygon-fill: #a50f15;
-      }
-    }
-        `);
+    const houseSalesStyle = new window.carto.style.CartoCSS(
+        helper.getHouseSalesStyling(0.74)
+    );
 
     function setCheckbox(setChecked) {
         mapToggleInput.checked = setChecked;
@@ -153,6 +135,24 @@ export default function() {
         });
     }
 
+    let isZoomLevelAboveThresholdPrev = false;
+    pointsMap.on("zoom", a => {
+        const newZoom = a.target._zoom;
+        const isZoomLevelAboveThresholdCurrent = newZoom > 10;
+
+        if (
+            isZoomLevelAboveThresholdPrev !== isZoomLevelAboveThresholdCurrent
+        ) {
+            if (isZoomLevelAboveThresholdCurrent) {
+                houseSalesStyle.setContent(helper.getHouseSalesStyling(0.3));
+            } else {
+                houseSalesStyle.setContent(helper.getHouseSalesStyling(0.74));
+            }
+        }
+
+        isZoomLevelAboveThresholdPrev = isZoomLevelAboveThresholdCurrent;
+    });
+
     noUiSlider.create(slider, {
         start: 3300,
         connect: [true, false],
@@ -162,33 +162,9 @@ export default function() {
         }
     });
 
-    const style = new window.carto.style.CartoCSS(`
-      #layer {
-        marker-width: 7;
-        marker-fill-opacity: 0.5;
-        marker-allow-overlap: true;
-        marker-line-width: 0;
-        marker-fill: rgb(51, 128, 158);
-      }
-      
-      #layer {
-        [commute_public > 0] {
-          marker-fill: #d0d1e6;
-        }
-        [commute_public > 1200] {
-          marker-fill: #a6bddb;
-        }
-        [commute_public > 2400] {
-          marker-fill: #74a9cf;
-        }
-        [commute_public > 3600] {
-          marker-fill: #2b8cbe;
-        }
-        [commute_public > 4800] {
-          marker-fill: #045a8d;
-        }
-      }
-    `);
+    const style = new window.carto.style.CartoCSS(
+        helper.getPointsStyling("commute_public")
+    );
 
     let selectedSeconds;
     helper.toggleButtons([...selectCityButtons], key => {
@@ -232,67 +208,12 @@ export default function() {
         if (key === "driving") {
             activeTransportation = "driving";
 
-            style.setContent(`
-      #layer {
-        marker-width: 7;
-        marker-fill-opacity: 0.5;
-        marker-allow-overlap: true;
-        marker-line-width: 0;
-        marker-fill: rgb(51, 128, 158);
-      }
-      
-      #layer {
-        [commute_driving = null] {
-          marker-width: 0;
-        }
-        [commute_driving > 0] {
-          marker-fill: #d0d1e6;
-        }
-        [commute_driving > 1200] {
-          marker-fill: #a6bddb;
-        }
-        [commute_driving > 2400] {
-          marker-fill: #74a9cf;
-        }
-        [commute_driving > 3600] {
-          marker-fill: #2b8cbe;
-        }
-        [commute_driving > 4800] {
-          marker-fill: #045a8d;
-        }
-      }
-    `);
+            style.setContent(helper.getPointsStyling("commute_driving"));
         }
         if (key === "public") {
             activeTransportation = "public";
 
-            style.setContent(`
-                    #layer {
-                      marker-width: 7;
-                      marker-fill-opacity: 0.5;
-                      marker-allow-overlap: true;
-                      marker-line-width: 0;
-                      marker-fill: rgb(51, 128, 158);
-                    }
-                    
-                    #layer {
-                      [commute_public > 0] {
-                        marker-fill: #d0d1e6;
-                      }
-                      [commute_public > 1200] {
-                        marker-fill: #a6bddb;
-                      }
-                      [commute_public > 2400] {
-                        marker-fill: #74a9cf;
-                      }
-                      [commute_public > 3600] {
-                        marker-fill: #2b8cbe;
-                      }
-                      [commute_public > 4800] {
-                        marker-fill: #045a8d;
-                      }
-                    }
-                  `);
+            style.setContent(helper.getPointsStyling("commute_public"));
         }
 
         source.setQuery(`
