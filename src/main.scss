@@ -117,7 +117,7 @@ strong.highlight {
     }
     ul {
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         margin-bottom: 12px;
 
         @media screen and (max-width: 450px) {
@@ -135,20 +135,23 @@ strong.highlight {
             }
         }
 
-        button {
-            width: 200px;
-            display: block;
-            background-color: transparent;
-            border: 1px lightgrey solid;
-            padding: 12px 16px;
-            border-radius: 4px;
+        li {
+            flex-grow: 1;
 
-            &.active {
-                background-color: lightgrey;
-            }
-
-            @media screen and (max-width: 450px) {
+            button {
                 width: 100%;
+                background-color: transparent;
+                border: 1px lightgrey solid;
+                padding: 12px 16px;
+                border-radius: 4px;
+
+                &.active {
+                    background-color: lightgrey;
+                }
+
+                @media screen and (max-width: 450px) {
+                    width: 100%;
+                }
             }
         }
     }
