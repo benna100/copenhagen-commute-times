@@ -180,6 +180,10 @@ export default function() {
             pointsMap.flyTo([57.042931, 9.917307]);
             activeCity = "aalborg";
         }
+        if (key === "odense") {
+            pointsMap.flyTo([55.401411, 10.386118]);
+            activeCity = "odense";
+        }
         updateCommuteTimesQuery(selectedSeconds);
     });
 
