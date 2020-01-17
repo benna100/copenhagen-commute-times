@@ -242,8 +242,8 @@ export default function() {
 
         for (let i = 1; i < 3; i++) {
             countUpFromTo(
-                currentIntervals[i] / 1000000,
-                nextIntervals[i] / 1000000,
+                currentIntervals[i - 1] / 1000000,
+                nextIntervals[i - 1] / 1000000,
                 document.querySelector(
                     `.points-map-container ul li:nth-child(${i +
                         1}) span:nth-child(1)`
@@ -251,8 +251,8 @@ export default function() {
             );
 
             countUpFromTo(
-                currentIntervals[i + 1] / 1000000,
-                nextIntervals[i + 1] / 1000000,
+                currentIntervals[i] / 1000000,
+                nextIntervals[i] / 1000000,
                 document.querySelector(
                     `.points-map-container ul li:nth-child(${i +
                         1}) span:nth-child(2)`
@@ -263,23 +263,23 @@ export default function() {
         // todo this got a little messy, clean up only defining the intervals array as a interval increment, fx 700.000
 
         countUpFromTo(
-            currentIntervals[3] / 1000000,
-            nextIntervals[3] / 1000000,
+            currentIntervals[2] / 1000000,
+            nextIntervals[2] / 1000000,
             document.querySelector(
                 `.points-map-container ul li:nth-child(4) span:nth-child(1)`
             )
         );
         countUpFromTo(
-            currentIntervals[3] / 1000000 + currentIntervals[0] / 1000000,
-            nextIntervals[3] / 1000000 + nextIntervals[0] / 1000000,
+            currentIntervals[2] / 1000000 + currentIntervals[0] / 1000000,
+            nextIntervals[2] / 1000000 + nextIntervals[0] / 1000000,
             document.querySelector(
                 `.points-map-container ul li:nth-child(4) span:nth-child(2)`
             )
         );
 
         countUpFromTo(
-            currentIntervals[3] / 1000000 + currentIntervals[0] / 1000000,
-            nextIntervals[3] / 1000000 + nextIntervals[0] / 1000000,
+            currentIntervals[2] / 1000000 + currentIntervals[0] / 1000000,
+            nextIntervals[2] / 1000000 + nextIntervals[0] / 1000000,
             document.querySelector(
                 `.points-map-container ul li:nth-child(5) span:nth-child(1)`
             )
