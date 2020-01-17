@@ -57,7 +57,7 @@ function tapHandler(event) {
     setMapActiveOrNot(true);
 }
 
-function getHouseSalesStyling(opacity) {
+function getHouseSalesStyling(opacity, intervals) {
     return `
     #layer {
       polygon-opacity: ${opacity};
@@ -65,16 +65,16 @@ function getHouseSalesStyling(opacity) {
       [agg_value > 0] {
         polygon-fill: #fcbba1;
       }
-      [agg_value > 1500000] {
+      [agg_value > ${intervals[0]}] {
         polygon-fill: #fc9272;
       }
-      [agg_value > 3000000] {
+      [agg_value > ${intervals[1]}] {
         polygon-fill: #fb6a4a;
       }
-      [agg_value > 4500000] {
+      [agg_value > ${intervals[2]}] {
         polygon-fill: #de2d26;
       }
-      [agg_value > 6000000] {
+      [agg_value > ${intervals[3]}] {
         polygon-fill: #a50f15;
       }
     }

@@ -1,5 +1,6 @@
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.css";
+import { CountUp } from "countup.js";
 
 import helper from "./helper";
 
@@ -85,7 +86,7 @@ export default function() {
         `);
 
     const houseSalesStyle = new window.carto.style.CartoCSS(
-        helper.getHouseSalesStyling(0.74)
+        helper.getHouseSalesStyling(0.74, [1500000, 3000000, 4500000, 6000000])
     );
 
     function setCheckbox(setChecked) {
@@ -167,25 +168,139 @@ export default function() {
     );
 
     let selectedSeconds;
+    const copenhagenIntervals = [1500000, 3000000, 4500000, 6000000];
+    const odenseIntervals = [500000, 1000000, 1500000, 2000000];
+    const aalborgIntervals = odenseIntervals;
+    const aarhusIntervals = [700000, 1400000, 2100000, 2800000];
+
+    let currentIntervals = copenhagenIntervals;
     helper.toggleButtons([...selectCityButtons], key => {
         if (key === "copenhagen") {
             pointsMap.flyTo([55.672554, 12.566271]);
             activeCity = "copenhagen";
+            houseSalesStyle.setContent(
+                helper.getHouseSalesStyling(0.74, copenhagenIntervals)
+            );
+
+            updateHouseSalesLegendCountUp(
+                currentIntervals,
+                copenhagenIntervals
+            );
+            currentIntervals = copenhagenIntervals;
         }
         if (key === "aarhus") {
             pointsMap.flyTo([56.150705, 10.204396]);
             activeCity = "aarhus";
+            houseSalesStyle.setContent(
+                helper.getHouseSalesStyling(0.74, aarhusIntervals)
+            );
+
+            updateHouseSalesLegendCountUp(currentIntervals, aarhusIntervals);
+            currentIntervals = aarhusIntervals;
         }
         if (key === "aalborg") {
             pointsMap.flyTo([57.042931, 9.917307]);
             activeCity = "aalborg";
+            houseSalesStyle.setContent(
+                helper.getHouseSalesStyling(0.74, [
+                    500000,
+                    1000000,
+                    1500000,
+                    2000000
+                ])
+            );
+
+            updateHouseSalesLegendCountUp(currentIntervals, aalborgIntervals);
+            currentIntervals = aalborgIntervals;
         }
         if (key === "odense") {
             pointsMap.flyTo([55.401411, 10.386118]);
             activeCity = "odense";
+            houseSalesStyle.setContent(
+                helper.getHouseSalesStyling(0.74, [
+                    500000,
+                    1000000,
+                    1500000,
+                    2000000
+                ])
+            );
+
+            updateHouseSalesLegendCountUp(currentIntervals, odenseIntervals);
+            currentIntervals = odenseIntervals;
         }
         updateCommuteTimesQuery(selectedSeconds);
     });
+
+    function updateHouseSalesLegendCountUp(currentIntervals, nextIntervals) {
+        countUpFromTo(
+            currentIntervals[0] / 1000000,
+            nextIntervals[0] / 1000000,
+            document.querySelector(
+                ".points-map-container ul li:nth-child(1) span:nth-child(2)"
+            )
+        );
+
+        for (let i = 1; i < 3; i++) {
+            countUpFromTo(
+                currentIntervals[i] / 1000000,
+                nextIntervals[i] / 1000000,
+                document.querySelector(
+                    `.points-map-container ul li:nth-child(${i +
+                        1}) span:nth-child(1)`
+                )
+            );
+
+            countUpFromTo(
+                currentIntervals[i + 1] / 1000000,
+                nextIntervals[i + 1] / 1000000,
+                document.querySelector(
+                    `.points-map-container ul li:nth-child(${i +
+                        1}) span:nth-child(2)`
+                )
+            );
+        }
+
+        // todo this got a little messy, clean up only defining the intervals array as a interval increment, fx 700.000
+
+        countUpFromTo(
+            currentIntervals[3] / 1000000,
+            nextIntervals[3] / 1000000,
+            document.querySelector(
+                `.points-map-container ul li:nth-child(4) span:nth-child(1)`
+            )
+        );
+        countUpFromTo(
+            currentIntervals[3] / 1000000 + currentIntervals[0] / 1000000,
+            nextIntervals[3] / 1000000 + nextIntervals[0] / 1000000,
+            document.querySelector(
+                `.points-map-container ul li:nth-child(4) span:nth-child(2)`
+            )
+        );
+
+        countUpFromTo(
+            currentIntervals[3] / 1000000 + currentIntervals[0] / 1000000,
+            nextIntervals[3] / 1000000 + nextIntervals[0] / 1000000,
+            document.querySelector(
+                `.points-map-container ul li:nth-child(5) span:nth-child(1)`
+            )
+        );
+    }
+
+    function countUpFromTo(from, to, element) {
+        const options = {
+            startVal: from,
+            duration: 1,
+            separator: ".",
+            decimal: ",",
+            decimalPlaces: 1
+        };
+        let demo = new CountUp(element, to, options);
+        if (!demo.error) {
+            demo.start();
+        } else {
+            console.error(demo.error);
+        }
+    }
 
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
