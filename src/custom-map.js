@@ -24,7 +24,7 @@ export default function() {
         }
     });
 
-    let mymap = L.map("points-map", {
+    let pointsMap = L.map("points-map", {
         preferCanvas: true
     }).setView([55.7, 12.5], 9);
 
@@ -38,7 +38,7 @@ export default function() {
 
     function updateCommuteTimesQuery(selectedSeconds) {
         markers.forEach(marker => {
-            mymap.removeLayer(marker);
+            pointsMap.removeLayer(marker);
         });
         // const filteredHyfCommutes = commutesHYF.filter(
         //     commute =>
@@ -56,7 +56,7 @@ export default function() {
         //             renderer: myRenderer,
         //             fillOpacity: 1
         //         }
-        //     ).addTo(mymap);
+        //     ).addTo(pointsMap);
 
         //     markers.push(marker);
         //     // markers.push(marker);
@@ -71,28 +71,25 @@ export default function() {
             const marker = L.circleMarker(
                 [commute.latitude, commute.longitude],
                 {
-                    color: getColorNovo(commute["commute-public"]),
+                    color: getColorHyf(commute["commute-public"]),
                     stroke: false,
                     radius: 3,
                     opacity: 1,
                     renderer: myRenderer,
                     fillOpacity: 1
                 }
-            ).addTo(mymap);
+            ).addTo(pointsMap);
 
             markers.push(marker);
-            // markers.push(marker);
         });
     }
-
-    // console.log(houseSales);
 
     L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         {
             maxZoom: 18
         }
-    ).addTo(mymap);
+    ).addTo(pointsMap);
 
     const client = new window.carto.Client({
         apiKey: "okNxK8jzzM39Lpj-7ZHYcw",
@@ -149,7 +146,7 @@ export default function() {
     );
 
     client.addLayer(houseSalesDenmarkLayer);
-    client.getLeafletLayer().addTo(mymap);
+    client.getLeafletLayer().addTo(pointsMap);
     houseSalesDenmarkLayer.hide();
 
     const houseSalesToggleButtons = document.querySelectorAll(
@@ -169,7 +166,7 @@ export default function() {
     });
 
     function getColorHyf(duration) {
-        return "#2b8cbe";
+        // return "#2b8cbe";
         if (duration > 4800) return "#045a8d";
         if (duration > 3600) return "#2b8cbe";
         if (duration > 2400) return "#74a9cf";
@@ -193,13 +190,13 @@ export default function() {
     );
     commutesNovoFiltered.forEach(commute => {
         const marker = L.circleMarker([commute.latitude, commute.longitude], {
-            color: getColorNovo(commute["commute-public"]),
+            color: getColorHyf(commute["commute-public"]),
             stroke: false,
             radius: 3,
             opacity: 1,
             renderer: myRenderer,
             fillOpacity: 1
-        }).addTo(mymap);
+        }).addTo(pointsMap);
 
         markers.push(marker);
     });
@@ -217,8 +214,114 @@ export default function() {
     //         opacity: 1,
     //         renderer: myRenderer,
     //         fillOpacity: 1
-    //     }).addTo(mymap);
+    //     }).addTo(pointsMap);
 
     //     markers.push(marker);
     // });
+
+    const mapToggleLabel = document.querySelector(".map-active label");
+    const mapToggleInput = document.querySelector(".map-active input");
+    const scrollPageSpan = document.querySelector(
+        ".map-active span.scroll-page"
+    );
+    const activeMapElement = document.querySelector(".map-active");
+    const scrollMapSpan = document.querySelector(".map-active span.scroll-map");
+    const pointsMapElement = document.querySelector("#points-map");
+
+    function setCheckbox(setChecked) {
+        mapToggleInput.checked = setChecked;
+    }
+    const shouldActiveMapToggle = helper.isTouchEnabled();
+
+    function setMapActiveOrNot(activeOrNot) {
+        if (activeOrNot) {
+            scrollMapSpan.classList.add("active");
+            pointsMap.dragging.enable();
+            setCheckbox(true);
+        } else {
+            scrollPageSpan.classList.add("active");
+            pointsMap.dragging.disable();
+            setCheckbox(false);
+        }
+    }
+
+    if (shouldActiveMapToggle) {
+        activeMapElement.classList.remove("hidden");
+
+        [
+            ...document.querySelectorAll(".leaflet-control-zoom a")
+        ].forEach(zoomButton =>
+            zoomButton.addEventListener("click", () => setMapActiveOrNot(true))
+        );
+
+        var tapedTwice = false;
+        function tapHandler(event) {
+            if (!tapedTwice) {
+                tapedTwice = true;
+                setTimeout(function() {
+                    tapedTwice = false;
+                }, 300);
+                return false;
+            }
+
+            //action on double tap goes below
+            setMapActiveOrNot(true);
+        }
+
+        pointsMapElement.addEventListener("touchstart", tapHandler);
+
+        function setMapActiveOrNot(activeOrNot) {
+            if (activeOrNot) {
+                scrollMapSpan.classList.add("active");
+                pointsMap.dragging.enable();
+                setCheckbox(true);
+            } else {
+                scrollPageSpan.classList.add("active");
+                pointsMap.dragging.disable();
+                setCheckbox(false);
+            }
+        }
+
+        document
+            .querySelector(".points-map-container")
+            .addEventListener("touchmove", handleMove, false);
+        function handleMove(evt) {
+            var touches = evt.changedTouches;
+            if (touches.length > 1) {
+                setMapActiveOrNot(true);
+            }
+        }
+
+        pointsMap.dragging.disable();
+
+        mapToggleInput.addEventListener("change", () => {
+            scrollPageSpan.classList.remove("active");
+            scrollMapSpan.classList.remove("active");
+            const scrollMap = mapToggleInput.checked;
+
+            setMapActiveOrNot(scrollMap);
+        });
+    }
+    const copenhagenIntervals = [1500000, 3000000, 4500000, 6000000];
+    let isZoomLevelAboveThresholdPrev = false;
+    pointsMap.on("zoom", a => {
+        const newZoom = a.target._zoom;
+        const isZoomLevelAboveThresholdCurrent = newZoom > 10;
+
+        if (
+            isZoomLevelAboveThresholdPrev !== isZoomLevelAboveThresholdCurrent
+        ) {
+            if (isZoomLevelAboveThresholdCurrent) {
+                houseSalesStyle.setContent(
+                    helper.getHouseSalesStyling(0.3, copenhagenIntervals)
+                );
+            } else {
+                houseSalesStyle.setContent(
+                    helper.getHouseSalesStyling(0.74, copenhagenIntervals)
+                );
+            }
+        }
+
+        isZoomLevelAboveThresholdPrev = isZoomLevelAboveThresholdCurrent;
+    });
 }

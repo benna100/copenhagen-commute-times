@@ -42,21 +42,6 @@ function toggleButtons(buttonElements, onButtonClick) {
     });
 }
 
-var tapedTwice = false;
-
-function tapHandler(event) {
-    if (!tapedTwice) {
-        tapedTwice = true;
-        setTimeout(function() {
-            tapedTwice = false;
-        }, 300);
-        return false;
-    }
-
-    //action on double tap goes below
-    setMapActiveOrNot(true);
-}
-
 function getHouseSalesStyling(opacity, intervals) {
     return `
     #layer {
@@ -126,7 +111,6 @@ export default {
     isMobileDevice,
     isTouchEnabled,
     toggleButtons,
-    tapHandler,
     getHouseSalesStyling,
     getPointsStyling,
     secondsToHms

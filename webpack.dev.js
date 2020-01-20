@@ -7,8 +7,8 @@ module.exports = {
     entry: "./src/index.js",
     devServer: {
         // access from mobile on same network
-        //host: '192.168.1.1', <-- your ip here
-        // host: "192.168.1.122",
+        // host: '192.168.1.1', <-- your ip here
+        host: "192.168.1.122",
         port: 8080,
         contentBase: path.join(__dirname, "dist")
     },
@@ -85,6 +85,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: "novo-hyf.html",
             template: "./src/pages/novo-hyf/novo-hyf.html"
+        }),
+        new HtmlWebpackPlugin({
+            filename: "novo-nordisk.html",
+            template: "./src/pages/novo-nordisk/novo-nordisk.html"
         })
     ]
 };

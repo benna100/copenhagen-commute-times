@@ -92,7 +92,20 @@ export default function() {
             zoomButton.addEventListener("click", () => setMapActiveOrNot(true))
         );
 
-        pointsMapElement.addEventListener("touchstart", helper.tapHandler);
+        var tapedTwice = false;
+        function tapHandler(event) {
+            if (!tapedTwice) {
+                tapedTwice = true;
+                setTimeout(function() {
+                    tapedTwice = false;
+                }, 300);
+                return false;
+            }
+
+            //action on double tap goes below
+            setMapActiveOrNot(true);
+        }
+        pointsMapElement.addEventListener("touchstart", tapHandler);
 
         function setMapActiveOrNot(activeOrNot) {
             if (activeOrNot) {
@@ -134,9 +147,13 @@ export default function() {
             isZoomLevelAboveThresholdPrev !== isZoomLevelAboveThresholdCurrent
         ) {
             if (isZoomLevelAboveThresholdCurrent) {
-                houseSalesStyle.setContent(helper.getHouseSalesStyling(0.3));
+                houseSalesStyle.setContent(
+                    helper.getHouseSalesStyling(0.3, currentIntervals)
+                );
             } else {
-                houseSalesStyle.setContent(helper.getHouseSalesStyling(0.74));
+                houseSalesStyle.setContent(
+                    helper.getHouseSalesStyling(0.74, currentIntervals)
+                );
             }
         }
 

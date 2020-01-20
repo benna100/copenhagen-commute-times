@@ -69,9 +69,9 @@
         <main>
             <h1>Pendlerkort for <strong>Novo Nordisk</strong></h1>
 
-            <ul class="custom-map-legend">
+            <!-- <ul class="custom-map-legend">
                 <li>Novo Nordisk</li>
-            </ul>
+            </ul> -->
             <section class="points-map">
                 <div class="map-active hidden">
                     <span class="scroll-page active">Scrolle på siden</span>
@@ -81,7 +81,16 @@
                 </div>
                 <div class="points-map-container">
                     <div id="points-map"></div>
-
+                    <div class="legend">
+                        <p>Rejsetid</p>
+                        <ul>
+                            <li id="lol">0 - 20 min</li>
+                            <li>20 - 40 min</li>
+                            <li>40 min - 1 time</li>
+                            <li>1 time - 1 time 20 min</li>
+                            <li>Mere end 1 time 20 min</li>
+                        </ul>
+                    </div>
                     <div class="legend house-sales hidden">
                         <p>Gennemsnits boligpriser</p>
                         <ul>
