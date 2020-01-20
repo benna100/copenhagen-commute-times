@@ -228,80 +228,15 @@ export default function() {
     const scrollMapSpan = document.querySelector(".map-active span.scroll-map");
     const pointsMapElement = document.querySelector("#points-map");
 
-    function setCheckbox(setChecked) {
-        mapToggleInput.checked = setChecked;
-    }
-    const shouldActiveMapToggle = helper.isTouchEnabled();
+    helper.toggleMobileFunctionality({
+        activeMapElement,
+        pointsMapElement,
+        scrollMapSpan,
+        scrollPageSpan,
+        pointsMap,
+        mapToggleInput
+    });
 
-    function setMapActiveOrNot(activeOrNot) {
-        if (activeOrNot) {
-            scrollMapSpan.classList.add("active");
-            pointsMap.dragging.enable();
-            setCheckbox(true);
-        } else {
-            scrollPageSpan.classList.add("active");
-            pointsMap.dragging.disable();
-            setCheckbox(false);
-        }
-    }
-
-    if (shouldActiveMapToggle) {
-        activeMapElement.classList.remove("hidden");
-
-        [
-            ...document.querySelectorAll(".leaflet-control-zoom a")
-        ].forEach(zoomButton =>
-            zoomButton.addEventListener("click", () => setMapActiveOrNot(true))
-        );
-
-        var tapedTwice = false;
-        function tapHandler(event) {
-            if (!tapedTwice) {
-                tapedTwice = true;
-                setTimeout(function() {
-                    tapedTwice = false;
-                }, 300);
-                return false;
-            }
-
-            //action on double tap goes below
-            setMapActiveOrNot(true);
-        }
-
-        pointsMapElement.addEventListener("touchstart", tapHandler);
-
-        function setMapActiveOrNot(activeOrNot) {
-            if (activeOrNot) {
-                scrollMapSpan.classList.add("active");
-                pointsMap.dragging.enable();
-                setCheckbox(true);
-            } else {
-                scrollPageSpan.classList.add("active");
-                pointsMap.dragging.disable();
-                setCheckbox(false);
-            }
-        }
-
-        document
-            .querySelector(".points-map-container")
-            .addEventListener("touchmove", handleMove, false);
-        function handleMove(evt) {
-            var touches = evt.changedTouches;
-            if (touches.length > 1) {
-                setMapActiveOrNot(true);
-            }
-        }
-
-        pointsMap.dragging.disable();
-
-        mapToggleInput.addEventListener("change", () => {
-            scrollPageSpan.classList.remove("active");
-            scrollMapSpan.classList.remove("active");
-            const scrollMap = mapToggleInput.checked;
-
-            setMapActiveOrNot(scrollMap);
-        });
-    }
     const copenhagenIntervals = [1500000, 3000000, 4500000, 6000000];
     let isZoomLevelAboveThresholdPrev = false;
     pointsMap.on("zoom", a => {
