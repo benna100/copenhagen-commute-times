@@ -1,7 +1,7 @@
-import helper from "./helper";
-
 import commutesHYF from "./pages/novo-hyf/hack-your-future.json";
-import commutesNovo from "./pages/novo-hyf/novo.json";
+import commutesNovo from "./pages/novo-hyf/novo-nordisk.json";
+
+import helper from "./helper";
 
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.css";
@@ -30,7 +30,6 @@ export default function() {
 
     let selectedSeconds;
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
-        console.log(selectedSecondsSlider);
         selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
 
@@ -41,27 +40,27 @@ export default function() {
         markers.forEach(marker => {
             mymap.removeLayer(marker);
         });
-        const filteredHyfCommutes = commutesHYF.filter(
-            commute =>
-                commute["commute-public"] < selectedSeconds &&
-                commute["commute-public"] > 0
-        );
-        filteredHyfCommutes.forEach(commute => {
-            const marker = L.circleMarker(
-                [commute.latitude, commute.longitude],
-                {
-                    color: getColorHyf(commute["commute-public"]),
-                    stroke: false,
-                    radius: 3,
-                    opacity: 1,
-                    renderer: myRenderer,
-                    fillOpacity: 1
-                }
-            ).addTo(mymap);
+        // const filteredHyfCommutes = commutesHYF.filter(
+        //     commute =>
+        //         commute["commute-public"] < selectedSeconds &&
+        //         commute["commute-public"] > 0
+        // );
+        // filteredHyfCommutes.forEach(commute => {
+        //     const marker = L.circleMarker(
+        //         [commute.latitude, commute.longitude],
+        //         {
+        //             color: getColorHyf(commute["commute-public"]),
+        //             stroke: false,
+        //             radius: 3,
+        //             opacity: 1,
+        //             renderer: myRenderer,
+        //             fillOpacity: 1
+        //         }
+        //     ).addTo(mymap);
 
-            markers.push(marker);
-            // markers.push(marker);
-        });
+        //     markers.push(marker);
+        //     // markers.push(marker);
+        // });
 
         const filteredNovoCommutes = commutesNovo.filter(
             commute =>
@@ -86,7 +85,6 @@ export default function() {
         });
     }
 
-    console.log(commutesHYF);
     // console.log(houseSales);
 
     L.tileLayer(
@@ -152,8 +150,26 @@ export default function() {
 
     client.addLayer(houseSalesDenmarkLayer);
     client.getLeafletLayer().addTo(mymap);
+    houseSalesDenmarkLayer.hide();
+
+    const houseSalesToggleButtons = document.querySelectorAll(
+        ".house-sales-wrapper button"
+    );
+    const houseSalesLegend = document.querySelector(".legend.house-sales");
+    helper.toggleButtons([...houseSalesToggleButtons], key => {
+        if (key === "off") {
+            houseSalesDenmarkLayer.hide();
+            houseSalesLegend.classList.add("hidden");
+        }
+
+        if (key === "on") {
+            houseSalesLegend.classList.remove("hidden");
+            houseSalesDenmarkLayer.show();
+        }
+    });
 
     function getColorHyf(duration) {
+        return "#2b8cbe";
         if (duration > 4800) return "#045a8d";
         if (duration > 3600) return "#2b8cbe";
         if (duration > 2400) return "#74a9cf";
@@ -162,6 +178,7 @@ export default function() {
     }
 
     function getColorNovo(duration) {
+        return "#ffff39";
         if (duration > 4800) return "yellow";
         if (duration > 3600) return "#ffff39";
         if (duration > 2400) return "#fafa69";
@@ -176,7 +193,7 @@ export default function() {
     );
     commutesNovoFiltered.forEach(commute => {
         const marker = L.circleMarker([commute.latitude, commute.longitude], {
-            color: getColorNovo(commutes["commute-public"]),
+            color: getColorNovo(commute["commute-public"]),
             stroke: false,
             radius: 3,
             opacity: 1,
@@ -187,23 +204,21 @@ export default function() {
         markers.push(marker);
     });
 
-    const commutesHyfFiltered = commutesHyf.filter(
-        commute =>
-            commute["commute-public"] < selectedSeconds &&
-            commute["commute-public"] > 0
-    );
-    commutesHyfFiltered.forEach(commute => {
-        const marker = L.circleMarker([commute.latitude, commute.longitude], {
-            color: getColorHyf(commutes["commute-public"]),
-            stroke: false,
-            radius: 3,
-            opacity: 1,
-            renderer: myRenderer,
-            fillOpacity: 1
-        }).addTo(mymap);
+    // const commutesHyfFiltered = commutesHyf.filter(
+    //     commute =>
+    //         commute["commute-public"] < selectedSeconds &&
+    //         commute["commute-public"] > 0
+    // );
+    // commutesHyfFiltered.forEach(commute => {
+    //     const marker = L.circleMarker([commute.latitude, commute.longitude], {
+    //         color: getColorHyf(commute["commute-public"]),
+    //         stroke: false,
+    //         radius: 3,
+    //         opacity: 1,
+    //         renderer: myRenderer,
+    //         fillOpacity: 1
+    //     }).addTo(mymap);
 
-        markers.push(marker);
-    });
-
-    document.querySelector("button").addEventListener("click", () => {});
+    //     markers.push(marker);
+    // });
 }

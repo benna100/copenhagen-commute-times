@@ -91,10 +91,13 @@ module.exports = {
             filename: "analysis.html",
             template: "./src/pages/analysis.html"
         }),
-        ,
         new HtmlWebpackPlugin({
             filename: "novo-hyf.html",
             template: "./src/pages/novo-hyf/novo-hyf.html"
+        }),
+        new HtmlWebpackPlugin({
+            filename: "novo-nordisk.html",
+            template: "./src/pages/novo-nordisk/novo-nordisk.html"
         }),
         new CleanWebpackPlugin(buildPath),
         new FaviconsWebpackPlugin({

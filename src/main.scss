@@ -366,3 +366,27 @@ footer {
         margin-bottom: 0px;
     }
 }
+
+.custom-map-legend {
+    > li {
+        position: relative;
+        padding-left: 14px;
+        margin-bottom: 8px;
+
+        &:before {
+            content: "";
+            position: absolute;
+            left: 1px;
+            top: 3px;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+        }
+        &:nth-child(1):before {
+            background-color: #fafa69;
+        }
+        &:nth-child(2):before {
+            background-color: #74a9cf;
+        }
+    }
+}
