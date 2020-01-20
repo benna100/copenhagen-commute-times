@@ -88,9 +88,13 @@ module.exports = {
             inject: "body"
         }),
         new HtmlWebpackPlugin({
-            // Also generate a test.html
             filename: "analysis.html",
             template: "./src/pages/analysis.html"
+        }),
+        ,
+        new HtmlWebpackPlugin({
+            filename: "novo-hyf.html",
+            template: "./src/pages/novo-hyf/novo-hyf.html"
         }),
         new CleanWebpackPlugin(buildPath),
         new FaviconsWebpackPlugin({

@@ -111,11 +111,23 @@ function getPointsStyling(columnName) {
   `;
 }
 
+function secondsToHms(d) {
+    d = Number(d);
+    const h = Math.floor(d / 3600);
+    const m = Math.floor((d % 3600) / 60);
+
+    const hDisplay = h > 0 ? h + (h === 1 ? " time, " : " timer, ") : "";
+    const mDisplay = m > 0 ? m + (m === 1 ? " minut" : " minutter") : "";
+
+    return hDisplay + mDisplay;
+}
+
 export default {
     isMobileDevice,
     isTouchEnabled,
     toggleButtons,
     tapHandler,
     getHouseSalesStyling,
-    getPointsStyling
+    getPointsStyling,
+    secondsToHms
 };

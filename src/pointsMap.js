@@ -42,17 +42,6 @@ export default function() {
         }
     ).addTo(pointsMap);
 
-    function secondsToHms(d) {
-        d = Number(d);
-        const h = Math.floor(d / 3600);
-        const m = Math.floor((d % 3600) / 60);
-
-        const hDisplay = h > 0 ? h + (h === 1 ? " time, " : " timer, ") : "";
-        const mDisplay = m > 0 ? m + (m === 1 ? " minut" : " minutter") : "";
-
-        return hDisplay + mDisplay;
-    }
-
     const client = new window.carto.Client({
         apiKey: "okNxK8jzzM39Lpj-7ZHYcw",
         username: "benna100"
@@ -289,7 +278,7 @@ export default function() {
     function countUpFromTo(from, to, element) {
         const options = {
             startVal: from,
-            duration: 1,
+            duration: 1.5,
             separator: ".",
             decimal: ",",
             decimalPlaces: 1
@@ -304,7 +293,7 @@ export default function() {
 
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
-        commuteTimeSpan.innerHTML = secondsToHms(selectedSeconds);
+        commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
 
         updateCommuteTimesQuery(selectedSeconds);
     });
