@@ -152,7 +152,7 @@ module.exports = {
                 "og:url": "https://billige-boliger.nu",
                 "og:type": "website",
                 "og:title": "Billige boliger med kort pendlertid",
-                "og:image": "./src/assets/social-facebook.jpg",
+                "og:image": "./src/assets/social-facebook-image.jpg",
                 "og:description":
                     "Find områder med billige boliger og kort pendlertid",
                 "og:site_name": "Billige boliger med kort pendlertid",
@@ -166,7 +166,7 @@ module.exports = {
                 "twitter:title": "Billige boliger med kort pendlertid",
                 "twitter:description":
                     "Find områder med billige boliger og kort pendlertid",
-                "twitter:image": "./src/assets/social-twitter.jpg"
+                "twitter:image": "./src/assets/social-twitter-image.jpg"
             }
         }),
         new CnameWebpackPlugin({
