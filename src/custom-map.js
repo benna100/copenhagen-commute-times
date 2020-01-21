@@ -26,7 +26,7 @@ export default function() {
 
     let pointsMap = L.map("points-map", {
         preferCanvas: true
-    }).setView([55.7, 12.5], 9);
+    }).setView([55.91486, 12.277422], 9);
 
     let selectedSeconds;
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
@@ -40,27 +40,6 @@ export default function() {
         markers.forEach(marker => {
             pointsMap.removeLayer(marker);
         });
-        // const filteredHyfCommutes = commutesHYF.filter(
-        //     commute =>
-        //         commute["commute-public"] < selectedSeconds &&
-        //         commute["commute-public"] > 0
-        // );
-        // filteredHyfCommutes.forEach(commute => {
-        //     const marker = L.circleMarker(
-        //         [commute.latitude, commute.longitude],
-        //         {
-        //             color: getColorHyf(commute["commute-public"]),
-        //             stroke: false,
-        //             radius: 3,
-        //             opacity: 1,
-        //             renderer: myRenderer,
-        //             fillOpacity: 1
-        //         }
-        //     ).addTo(pointsMap);
-
-        //     markers.push(marker);
-        //     // markers.push(marker);
-        // });
 
         const filteredNovoCommutes = commutesNovo.filter(
             commute =>
@@ -183,6 +162,9 @@ export default function() {
         if (duration > 0) return "#fafad0";
     }
 
+    const marker = L.marker([55.91486, 12.277422]).addTo(pointsMap);
+    marker.bindPopup("Pendlerkort udgangspunkt");
+
     const commutesNovoFiltered = commutesNovo.filter(
         commute =>
             commute["commute-public"] < selectedSeconds &&
@@ -200,24 +182,6 @@ export default function() {
 
         markers.push(marker);
     });
-
-    // const commutesHyfFiltered = commutesHyf.filter(
-    //     commute =>
-    //         commute["commute-public"] < selectedSeconds &&
-    //         commute["commute-public"] > 0
-    // );
-    // commutesHyfFiltered.forEach(commute => {
-    //     const marker = L.circleMarker([commute.latitude, commute.longitude], {
-    //         color: getColorHyf(commute["commute-public"]),
-    //         stroke: false,
-    //         radius: 3,
-    //         opacity: 1,
-    //         renderer: myRenderer,
-    //         fillOpacity: 1
-    //     }).addTo(pointsMap);
-
-    //     markers.push(marker);
-    // });
 
     const mapToggleLabel = document.querySelector(".map-active label");
     const mapToggleInput = document.querySelector(".map-active input");

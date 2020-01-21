@@ -128,10 +128,26 @@ export default function() {
     const aalborgIntervals = odenseIntervals;
     const aarhusIntervals = [700000, 1400000, 2100000, 2800000];
 
+    L.marker([55.683332, 12.57166])
+        .addTo(pointsMap)
+        .bindPopup("København udgangspunkt");
+
+    L.marker([55.401411, 10.386118])
+        .addTo(pointsMap)
+        .bindPopup("Odense udgangspunkt");
+
+    L.marker([56.150705, 10.204396])
+        .addTo(pointsMap)
+        .bindPopup("Århus udgangspunkt");
+
+    L.marker([57.042931, 9.917307])
+        .addTo(pointsMap)
+        .bindPopup("Aalborg udgangspunkt");
+
     let currentIntervals = copenhagenIntervals;
     helper.toggleButtons([...selectCityButtons], key => {
         if (key === "copenhagen") {
-            pointsMap.flyTo([55.672554, 12.566271]);
+            pointsMap.flyTo([55.683332, 12.57166]);
             activeCity = "copenhagen";
             houseSalesStyle.setContent(
                 helper.getHouseSalesStyling(0.74, copenhagenIntervals)
