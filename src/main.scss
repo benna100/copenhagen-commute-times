@@ -5,6 +5,8 @@ body {
     padding-top: 24px;
     color: #1d2d35;
     font-family: "Montserrat", sans-serif;
+    position: relative;
+    padding-bottom: 140px;
 }
 
 main {
@@ -361,6 +363,10 @@ footer {
     align-items: center;
     text-align: center;
     padding: 24px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
 
     p:nth-child(3) {
         margin-bottom: 0px;
@@ -388,5 +394,26 @@ footer {
         &:nth-child(2):before {
             background-color: #74a9cf;
         }
+    }
+}
+
+form {
+    margin-top: 24px;
+    input {
+        width: 100%;
+        background-color: transparent;
+        border: 1px lightgrey solid;
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin-bottom: 12px;
+    }
+
+    button {
+        background-color: #3fb8af;
+        border: none;
+        color: white;
+        width: 100%;
+        padding: 12px;
+        border-radius: 4px;
     }
 }

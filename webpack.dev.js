@@ -89,6 +89,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: "novo-nordisk.html",
             template: "./src/pages/novo-nordisk/novo-nordisk.html"
+        }),
+        new HtmlWebpackPlugin({
+            filename: "form-submit.html",
+            template: "./src/pages/form-submit.html"
         })
     ]
 };

@@ -99,6 +99,10 @@ module.exports = {
             filename: "novo-nordisk.html",
             template: "./src/pages/novo-nordisk/novo-nordisk.html"
         }),
+        new HtmlWebpackPlugin({
+            filename: "form-submit.html",
+            template: "./src/pages/form-submit.html"
+        }),
         new CleanWebpackPlugin(buildPath),
         new FaviconsWebpackPlugin({
             // Your source logo
@@ -113,7 +117,7 @@ module.exports = {
             // favicon background color (see https://github.com/haydenbleasel/favicons#usage)
             background: "#fff",
             // favicon app title (see https://github.com/haydenbleasel/favicons#usage)
-            title: "game-of-life}}",
+            title: "billige-boliger.nu",
 
             // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
             icons: {
