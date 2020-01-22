@@ -1,10 +1,20 @@
-import commutesHYF from "./pages/novo-hyf/hack-your-future.json";
-import commutesNovo from "./pages/novo-hyf/novo-nordisk.json";
+import commutePoints from "./pages/novo-nordisk/novo-nordisk.json";
 
 import helper from "./helper";
 
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.css";
+// const commutePoints = commutesNovo.map(commuteNovo => {
+//     const difference =
+//         commuteNovo["commute-driving"] - commuteNovo["commute-public"];
+//     const aggregate =
+//         commuteNovo["commute-driving"] + commuteNovo["commute-public"];
+//     // https://www.mathsisfun.com/percentage-difference.html
+//     const percentageDifference = (difference / (aggregate / 2)) * 100;
+//     const objectToReturn = commuteNovo;
+//     objectToReturn["driving-public-difference"] = percentageDifference;
+//     return objectToReturn;
+// });
 
 export default function() {
     const myRenderer = L.canvas({ padding: 0.5 });
@@ -29,28 +39,44 @@ export default function() {
     }).setView([55.91486, 12.277422], 9);
 
     let selectedSeconds;
+    let activeTransportation = "commute-public";
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
 
-        updateCommuteTimesQuery(selectedSeconds);
+        updateCommutePositions(activeTransportation, selectedSeconds);
     });
 
-    function updateCommuteTimesQuery(selectedSeconds) {
+    const transportationButtons = document.querySelectorAll(
+        ".transportation-wrapper button"
+    );
+    helper.toggleButtons([...transportationButtons], key => {
+        if (key === "driving") {
+            updateCommutePositions("commute-driving", selectedSeconds);
+            activeTransportation = "commute-driving";
+        }
+        if (key === "public") {
+            updateCommutePositions("commute-public", selectedSeconds);
+            activeTransportation = "commute-public";
+        }
+    });
+
+    function updateCommutePositions(key, selectedSeconds) {
         markers.forEach(marker => {
             pointsMap.removeLayer(marker);
         });
 
-        const filteredNovoCommutes = commutesNovo.filter(
-            commute =>
-                commute["commute-public"] < selectedSeconds &&
-                commute["commute-public"] > 0
+        const filteredNovoCommutes = commutePoints.filter(
+            commute => commute[key] < selectedSeconds && commute[key] > 0
         );
         filteredNovoCommutes.forEach(commute => {
             const marker = L.circleMarker(
                 [commute.latitude, commute.longitude],
                 {
-                    color: getColorHyf(commute["commute-public"]),
+                    // color: getColorDifference(
+                    //     commute["driving-public-difference"]
+                    // ),
+                    color: getColorHyf(commute[key]),
                     stroke: false,
                     radius: 3,
                     opacity: 1,
@@ -153,6 +179,15 @@ export default function() {
         if (duration > 0) return "#d0d1e6";
     }
 
+    function getColorDifference(duration) {
+        // console.log(duration);
+        if (duration > -25) return "#045a8d";
+        if (duration > -50) return "#2b8cbe";
+        if (duration > -75) return "#74a9cf";
+        if (duration > -100) return "#a6bddb";
+        if (duration > -120) return "#d0d1e6";
+    }
+
     function getColorNovo(duration) {
         return "#ffff39";
         if (duration > 4800) return "yellow";
@@ -165,23 +200,7 @@ export default function() {
     const marker = L.marker([55.91486, 12.277422]).addTo(pointsMap);
     marker.bindPopup("Pendlerkort udgangspunkt");
 
-    const commutesNovoFiltered = commutesNovo.filter(
-        commute =>
-            commute["commute-public"] < selectedSeconds &&
-            commute["commute-public"] > 0
-    );
-    commutesNovoFiltered.forEach(commute => {
-        const marker = L.circleMarker([commute.latitude, commute.longitude], {
-            color: getColorHyf(commute["commute-public"]),
-            stroke: false,
-            radius: 3,
-            opacity: 1,
-            renderer: myRenderer,
-            fillOpacity: 1
-        }).addTo(pointsMap);
-
-        markers.push(marker);
-    });
+    updateCommutePositions("commute-public", selectedSeconds);
 
     const mapToggleLabel = document.querySelector(".map-active label");
     const mapToggleInput = document.querySelector(".map-active input");

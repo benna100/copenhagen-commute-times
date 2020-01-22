@@ -158,7 +158,7 @@ module.exports = {
                 "og:title": "Billige boliger med kort pendlertid",
                 "og:image": "./src/assets/social-facebook-image.jpg",
                 "og:description":
-                    "Find områder med billige boliger og kort pendlertid",
+                    "Find billige boligområder med kort pendlerafstand",
                 "og:site_name": "Billige boliger med kort pendlertid",
                 "og:locale": "da",
                 "og:article:author": "Benjamin Hughes"
@@ -169,7 +169,7 @@ module.exports = {
                 "twitter:url": "https://billige-boliger.nu",
                 "twitter:title": "Billige boliger med kort pendlertid",
                 "twitter:description":
-                    "Find områder med billige boliger og kort pendlertid",
+                    "Find billige boligområder med kort pendlerafstand",
                 "twitter:image": "./src/assets/social-twitter-image.jpg"
             }
         }),

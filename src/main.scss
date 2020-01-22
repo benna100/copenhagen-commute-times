@@ -2,15 +2,30 @@
 
 body {
     font-family: sans-serif;
-    padding-top: 24px;
     color: #1d2d35;
     font-family: "Montserrat", sans-serif;
     position: relative;
     padding-bottom: 140px;
+    min-height: 100vh;
+}
+
+header {
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 24px 12px 24px;
+
+    a {
+        font-weight: bold;
+        font-size: 1.5rem;
+        line-height: 2.5rem;
+        margin-bottom: 24px;
+        text-decoration: none;
+        color: #1d2d35;
+    }
 }
 
 main {
-    padding: 24px 12px 36px;
+    padding: 0px 12px 36px;
     margin: 0 auto;
     max-width: 800px;
 
@@ -415,5 +430,6 @@ form {
         width: 100%;
         padding: 12px;
         border-radius: 4px;
+        cursor: pointer;
     }
 }

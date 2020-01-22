@@ -52,7 +52,6 @@ export default function() {
     );
 
     const hexagonSizes = 15;
-
     const houseSalesSourceDenmark = new window.carto.source.SQL(`
           -- Create hexagon grid
           WITH hgrid AS (
