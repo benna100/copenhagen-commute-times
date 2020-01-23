@@ -7,6 +7,7 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const SocialTags = require("social-tags-webpack-plugin");
 const CnameWebpackPlugin = require("cname-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const buildPath = path.resolve(__dirname, "dist");
 
@@ -92,12 +93,8 @@ module.exports = {
             template: "./src/pages/analysis.html"
         }),
         new HtmlWebpackPlugin({
-            filename: "novo-hyf.html",
-            template: "./src/pages/novo-hyf/novo-hyf.html"
-        }),
-        new HtmlWebpackPlugin({
             filename: "novo-nordisk.html",
-            template: "./src/pages/novo-nordisk/novo-nordisk.html"
+            template: "./src/pages/custom-pages/novo-nordisk.html"
         }),
         new HtmlWebpackPlugin({
             filename: "form-submit.html",
@@ -155,11 +152,12 @@ module.exports = {
                 "fb:app_id": "123456789",
                 "og:url": "https://billige-boliger.nu",
                 "og:type": "website",
-                "og:title": "Billige boliger med kort pendlertid",
+                "og:title": "Find billige boligområder med kort pendlerafstand",
                 "og:image": "./src/assets/social-facebook-image.jpg",
                 "og:description":
+                    "Det er nemt, hurtigt og intuitivt! Så hvad venter du på?",
+                "og:site_name":
                     "Find billige boligområder med kort pendlerafstand",
-                "og:site_name": "Billige boliger med kort pendlertid",
                 "og:locale": "da",
                 "og:article:author": "Benjamin Hughes"
             },
@@ -167,14 +165,18 @@ module.exports = {
                 "twitter:card": "summary_large_image",
                 "twitter:creator": "@dalshughes",
                 "twitter:url": "https://billige-boliger.nu",
-                "twitter:title": "Billige boliger med kort pendlertid",
-                "twitter:description":
+                "twitter:title":
                     "Find billige boligområder med kort pendlerafstand",
+                "twitter:description":
+                    "Det er nemt, hurtigt og intuitivt! Så hvad venter du på?",
                 "twitter:image": "./src/assets/social-twitter-image.jpg"
             }
         }),
         new CnameWebpackPlugin({
             domain: "billige-boliger.nu"
-        })
+        }),
+        new CopyPlugin([
+            { from: "./src/commuter-positions", to: "commuter-positions" }
+        ])
     ]
 };

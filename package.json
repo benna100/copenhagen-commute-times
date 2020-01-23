@@ -30,6 +30,7 @@
         "babel-preset-env": "^1.7.0",
         "clean-webpack-plugin": "^0.1.19",
         "cname-webpack-plugin": "^2.0.1",
+        "copy-webpack-plugin": "^5.1.1",
         "css-loader": "^0.28.11",
         "css-reset-and-normalize": "^1.0.1",
         "cssnano": "^3.10.0",

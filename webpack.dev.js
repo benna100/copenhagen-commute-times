@@ -1,4 +1,5 @@
 const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -83,16 +84,15 @@ module.exports = {
             template: "./src/pages/analysis.html"
         }),
         new HtmlWebpackPlugin({
-            filename: "novo-hyf.html",
-            template: "./src/pages/novo-hyf/novo-hyf.html"
+            filename: "form-submit.html",
+            template: "./src/pages/form-submit.html"
         }),
         new HtmlWebpackPlugin({
             filename: "novo-nordisk.html",
-            template: "./src/pages/novo-nordisk/novo-nordisk.html"
+            template: "./src/pages/custom-pages/novo-nordisk.html"
         }),
-        new HtmlWebpackPlugin({
-            filename: "form-submit.html",
-            template: "./src/pages/form-submit.html"
-        })
+        new CopyPlugin([
+            { from: "./src/commuter-positions", to: "commuter-positions" }
+        ])
     ]
 };

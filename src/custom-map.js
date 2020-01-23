@@ -1,9 +1,7 @@
-import commutePoints from "./pages/novo-nordisk/novo-nordisk.json";
-
 import helper from "./helper";
-
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.css";
+
 // const commutePoints = commutesNovo.map(commuteNovo => {
 //     const difference =
 //         commuteNovo["commute-driving"] - commuteNovo["commute-public"];
@@ -17,6 +15,14 @@ import "nouislider/distribute/nouislider.css";
 // });
 
 export default function() {
+    const url = `./commuter-positions/${window.commuterPositionsJsonFile}.json`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(commuterPositionsData => startEverything(commuterPositionsData));
+}
+
+function startEverything(commuterPositionsData) {
     const myRenderer = L.canvas({ padding: 0.5 });
 
     const slider = document.querySelector(".points-map .slider");
@@ -36,7 +42,13 @@ export default function() {
 
     let pointsMap = L.map("points-map", {
         preferCanvas: true
-    }).setView([55.91486, 12.277422], 9);
+    }).setView(
+        [
+            commuterPositionsData.originPosition.latitude,
+            commuterPositionsData.originPosition.longitude
+        ],
+        9
+    );
 
     let selectedSeconds;
     let activeTransportation = "commute-public";
@@ -66,10 +78,10 @@ export default function() {
             pointsMap.removeLayer(marker);
         });
 
-        const filteredNovoCommutes = commutePoints.filter(
+        const filteresCommuterPositions = commuterPositionsData.commuterPositions.filter(
             commute => commute[key] < selectedSeconds && commute[key] > 0
         );
-        filteredNovoCommutes.forEach(commute => {
+        filteresCommuterPositions.forEach(commute => {
             const marker = L.circleMarker(
                 [commute.latitude, commute.longitude],
                 {
@@ -197,7 +209,10 @@ export default function() {
         if (duration > 0) return "#fafad0";
     }
 
-    const marker = L.marker([55.91486, 12.277422]).addTo(pointsMap);
+    const marker = L.marker([
+        commuterPositionsData.originPosition.latitude,
+        commuterPositionsData.originPosition.longitude
+    ]).addTo(pointsMap);
     marker.bindPopup("Pendlerkort udgangspunkt");
 
     updateCommutePositions("commute-public", selectedSeconds);
