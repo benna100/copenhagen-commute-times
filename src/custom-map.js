@@ -11,6 +11,7 @@ function updateCommutePositions(
     commuterPositionsData,
     colorScheme,
     renderer,
+    originPosition,
     intervals
 ) {
     markers.forEach(marker => {
@@ -28,10 +29,26 @@ function updateCommutePositions(
     );
 
     filteresCommuterPositions.forEach(commute => {
+        // const distanceToCenter = mapHelper.getDistanceFromLatLonInKm(
+        //     {
+        //         latitude: commute.latitude,
+        //         longitude: commute.longitude
+        //     },
+        //     originPosition
+        // );
+
+        // let radius = 3;
+        // if (distanceToCenter >= 80) {
+        //     radius = 10;
+        // }
+        // if (distanceToCenter >= 50 && distanceToCenter < 80) {
+        //     radius = 7;
+        // }
+        // if (distanceToCenter < 50) {
+        //     radius = 3;
+        // }
+
         const marker = L.circleMarker([commute.latitude, commute.longitude], {
-            // color: getColorDifference(
-            //     commute["driving-public-difference"]
-            // ),
             color: colorScheme(commute[key], intervals),
             stroke: false,
             radius: 3,
@@ -60,9 +77,9 @@ function startEverything(commuterPositionsData) {
         ".points-map .slider-container p span"
     );
     const markers = [];
-
+    const startSelectedSeconds = 3300;
     noUiSlider.create(slider, {
-        start: 3300,
+        start: startSelectedSeconds,
         connect: [true, false],
         range: {
             min: 0,
@@ -91,6 +108,24 @@ function startEverything(commuterPositionsData) {
         houseSalesStyle
     });
 
+    function getColorHyf(duration) {
+        // return "#2b8cbe";
+        if (duration > 4800) return "#045a8d";
+        if (duration > 3600) return "#2b8cbe";
+        if (duration > 2400) return "#74a9cf";
+        if (duration > 1200) return "#a6bddb";
+        if (duration > 0) return "#d0d1e6";
+    }
+
+    function getColorNovo(duration) {
+        return "#ffff39";
+        if (duration > 4800) return "yellow";
+        if (duration > 3600) return "#ffff39";
+        if (duration > 2400) return "#fafa69";
+        if (duration > 1200) return "#ffffa2";
+        if (duration > 0) return "#fafad0";
+    }
+
     let selectedSeconds;
     let activeTransportation = "commute-public";
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
@@ -104,9 +139,26 @@ function startEverything(commuterPositionsData) {
             markers,
             commuterPositionsData,
             getColorHyf,
-            myRenderer
+            myRenderer,
+            originPosition
         );
     });
+
+    // commuteTimeSpan.innerHTML = helper.secondsToHms(startSelectedSeconds);
+    // setTimeout(
+    //     () =>
+    //         updateCommutePositions(
+    //             activeTransportation,
+    //             startSelectedSeconds,
+    //             map,
+    //             markers,
+    //             commuterPositionsData,
+    //             getColorHyf,
+    //             myRenderer,
+    //             originPosition
+    //         ),
+    //     0
+    // );
 
     const transportationButtons = document.querySelectorAll(
         ".transportation-wrapper button"
@@ -120,7 +172,8 @@ function startEverything(commuterPositionsData) {
                 markers,
                 commuterPositionsData,
                 getColorHyf,
-                myRenderer
+                myRenderer,
+                originPosition
             );
             activeTransportation = "commute-driving";
         }
@@ -132,7 +185,8 @@ function startEverything(commuterPositionsData) {
                 markers,
                 commuterPositionsData,
                 getColorHyf,
-                myRenderer
+                myRenderer,
+                originPosition
             );
             activeTransportation = "commute-public";
         }
@@ -166,24 +220,6 @@ function startEverything(commuterPositionsData) {
         }
     });
 
-    function getColorHyf(duration) {
-        // return "#2b8cbe";
-        if (duration > 4800) return "#045a8d";
-        if (duration > 3600) return "#2b8cbe";
-        if (duration > 2400) return "#74a9cf";
-        if (duration > 1200) return "#a6bddb";
-        if (duration > 0) return "#d0d1e6";
-    }
-
-    function getColorNovo(duration) {
-        return "#ffff39";
-        if (duration > 4800) return "yellow";
-        if (duration > 3600) return "#ffff39";
-        if (duration > 2400) return "#fafa69";
-        if (duration > 1200) return "#ffffa2";
-        if (duration > 0) return "#fafad0";
-    }
-
     const marker = L.marker([
         commuterPositionsData.originPosition.latitude,
         commuterPositionsData.originPosition.longitude
@@ -197,7 +233,8 @@ function startEverything(commuterPositionsData) {
         markers,
         commuterPositionsData,
         getColorHyf,
-        myRenderer
+        myRenderer,
+        originPosition
     );
 
     window.currentIntervals = [1500000, 3000000, 4500000, 6000000];
@@ -278,6 +315,7 @@ function showDifferenceDrivingPublicMap(
         commuterPositionsData,
         getColorDifference,
         myRenderer,
+        originPosition,
         intervals
     );
 }
