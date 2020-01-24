@@ -64,7 +64,7 @@
             content="Find billige boligområder med kort pendlerafstand. Det er gratis, nemt og hurtigt!"
         />
         <script>
-            window.commuterPositionsJsonFile = 'brennum-park-1-3400-hillerod';
+            window.commuterPositionsJsonFile = "brennum-park-1-3400-hillerod";
         </script>
     </head>
 
@@ -73,20 +73,21 @@
             <a href="/">Billige-boliger.nu</a>
         </header>
         <main>
-            <h1>Pendlerkort for <strong>Novo Nordisk</strong></h1>
-            <p>Se hvor langt væk fra Novo Nordisk du kan pendle</p>
-            <!-- <ul class="custom-map-legend">
-                <li>Novo Nordisk</li>
-            </ul> -->
+            <h1>
+                Pendlerkort for <strong>Brennum park 1 3400 Hillerød</strong>
+            </h1>
+            <p>
+                Se hvor hurtigt du kan pendle til Brennum park 1 3400 Hillerød.
+            </p>
             <section class="points-map">
-                <div class="map-active hidden">
+                <div class="map-activate hidden">
                     <span class="scroll-page active">Scrolle på siden</span>
                     <input type="checkbox" id="toggle" class="checkbox" />
                     <label for="toggle" class="switch"></label>
                     <span class="scroll-map">Scrolle på kortet</span>
                 </div>
-                <div class="points-map-container">
-                    <div id="points-map"></div>
+                <div class="map-container">
+                    <div id="map"></div>
                     <div class="legend">
                         <p>Rejsetid</p>
                         <ul>
@@ -164,6 +165,35 @@
                     <strong>huse solgt i 2017, 2018 og 2019</strong>.
                 </p>
                 <br />
+            </section>
+
+            <section class="car-public-difference-map">
+                <h2>Bonuskort 🌟💥🔥</h2>
+                <p>
+                    Fuldstændig gratis får du et bonuskort! Det viser forskellen
+                    i rejsetid mellem at køre og tage det offentlige.
+                    <strong
+                        >Jo mørkere des hurtigere er det relativt, at tage det
+                        offentlige</strong
+                    >
+                    i forhold til at <strong>køre.</strong>
+                </p>
+                <p>
+                    Hvis man kigger efter et sted at bo med
+                    <strong>gode offentlig transport muligheder</strong>, skal
+                    man altså <strong>kigge efter de mørkere områder.</strong>
+                </p>
+                <section class="car-public-difference-map">
+                    <div class="map-activate hidden">
+                        <span class="scroll-page active">Scrolle på siden</span>
+                        <input type="checkbox" id="toggle" class="checkbox" />
+                        <label for="toggle" class="switch"></label>
+                        <span class="scroll-map">Scrolle på kortet</span>
+                    </div>
+                    <div class="map-container">
+                        <div id="map"></div>
+                    </div>
+                </section>
             </section>
         </main>
         <footer>

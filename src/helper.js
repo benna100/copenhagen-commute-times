@@ -42,30 +42,6 @@ function toggleButtons(buttonElements, onButtonClick) {
     });
 }
 
-function getHouseSalesStyling(opacity, intervals) {
-    return `
-    #layer {
-      polygon-opacity: ${opacity};
-
-      [agg_value > 0] {
-        polygon-fill: #fcbba1;
-      }
-      [agg_value > ${intervals[0]}] {
-        polygon-fill: #fc9272;
-      }
-      [agg_value > ${intervals[1]}] {
-        polygon-fill: #fb6a4a;
-      }
-      [agg_value > ${intervals[2]}] {
-        polygon-fill: #de2d26;
-      }
-      [agg_value > ${intervals[3]}] {
-        polygon-fill: #a50f15;
-      }
-    }
-        `;
-}
-
 function getPointsStyling(columnName) {
     return `
     #layer {
@@ -107,79 +83,10 @@ function secondsToHms(d) {
     return hDisplay + mDisplay;
 }
 
-function toggleMobileFunctionality({
-    activeMapElement,
-    pointsMapElement,
-    scrollMapSpan,
-    scrollPageSpan,
-    pointsMap,
-    mapToggleInput
-}) {
-    function setCheckbox(setChecked) {
-        mapToggleInput.checked = setChecked;
-    }
-    if (isTouchEnabled()) {
-        activeMapElement.classList.remove("hidden");
-
-        [
-            ...document.querySelectorAll(".leaflet-control-zoom a")
-        ].forEach(zoomButton =>
-            zoomButton.addEventListener("click", () => setMapActiveOrNot(true))
-        );
-
-        let tapedTwice = false;
-        function tapHandler(event) {
-            if (!tapedTwice) {
-                tapedTwice = true;
-                setTimeout(function() {
-                    tapedTwice = false;
-                }, 300);
-                return false;
-            }
-
-            //action on double tap goes below
-            setMapActiveOrNot(true);
-        }
-        pointsMapElement.addEventListener("touchstart", tapHandler);
-
-        function setMapActiveOrNot(activeOrNot) {
-            if (activeOrNot) {
-                scrollMapSpan.classList.add("active");
-                pointsMap.dragging.enable();
-                setCheckbox(true);
-            } else {
-                scrollPageSpan.classList.add("active");
-                pointsMap.dragging.disable();
-                setCheckbox(false);
-            }
-        }
-
-        document
-            .querySelector(".points-map-container")
-            .addEventListener("touchmove", handleMove, false);
-        function handleMove(evt) {
-            var touches = evt.changedTouches;
-            if (touches.length > 1) {
-                setMapActiveOrNot(true);
-            }
-        }
-        pointsMap.dragging.disable();
-        mapToggleInput.addEventListener("change", () => {
-            scrollPageSpan.classList.remove("active");
-            scrollMapSpan.classList.remove("active");
-            const scrollMap = mapToggleInput.checked;
-
-            setMapActiveOrNot(scrollMap);
-        });
-    }
-}
-
 export default {
     isMobileDevice,
     isTouchEnabled,
     toggleButtons,
-    getHouseSalesStyling,
     getPointsStyling,
-    secondsToHms,
-    toggleMobileFunctionality
+    secondsToHms
 };

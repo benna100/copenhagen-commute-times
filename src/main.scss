@@ -83,7 +83,7 @@ strong.highlight {
     padding: 4px 2px;
 }
 
-.map-active {
+.map-activate {
     &.hidden {
         display: none;
     }
@@ -328,7 +328,7 @@ strong.highlight {
     }
 }
 
-.points-map-container,
+.map-container,
 .house-sales-container {
     position: relative;
     border-radius: 8px;
@@ -337,6 +337,7 @@ strong.highlight {
 
 section.points-map,
 section.house-sales-map,
+section.car-public-difference-map,
 .hexbin-map-container {
     position: relative;
     margin-bottom: 36px;
@@ -348,10 +349,11 @@ section.house-sales-map,
     overflow: hidden;
 }
 
-#points-map,
+#map,
 #hexbin-map,
 #house-sales {
     height: 70vh;
+    position: relative;
 }
 
 section.donate {

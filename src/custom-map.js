@@ -1,18 +1,48 @@
 import helper from "./helper";
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.css";
+import mapHelper from "./map-helper";
 
-// const commutePoints = commutesNovo.map(commuteNovo => {
-//     const difference =
-//         commuteNovo["commute-driving"] - commuteNovo["commute-public"];
-//     const aggregate =
-//         commuteNovo["commute-driving"] + commuteNovo["commute-public"];
-//     // https://www.mathsisfun.com/percentage-difference.html
-//     const percentageDifference = (difference / (aggregate / 2)) * 100;
-//     const objectToReturn = commuteNovo;
-//     objectToReturn["driving-public-difference"] = percentageDifference;
-//     return objectToReturn;
-// });
+function updateCommutePositions(
+    key,
+    selectedSeconds,
+    map,
+    markers,
+    commuterPositionsData,
+    colorScheme,
+    renderer,
+    intervals
+) {
+    markers.forEach(marker => {
+        map.removeLayer(marker);
+    });
+
+    const filteresCommuterPositions = commuterPositionsData.commuterPositions.filter(
+        commute => {
+            if (key === "driving-public-difference") {
+                return commute[key] !== null;
+            } else {
+                return commute[key] < selectedSeconds && commute[key] > 0;
+            }
+        }
+    );
+
+    filteresCommuterPositions.forEach(commute => {
+        const marker = L.circleMarker([commute.latitude, commute.longitude], {
+            // color: getColorDifference(
+            //     commute["driving-public-difference"]
+            // ),
+            color: colorScheme(commute[key], intervals),
+            stroke: false,
+            radius: 3,
+            opacity: 1,
+            renderer: renderer,
+            fillOpacity: 1
+        }).addTo(map);
+
+        markers.push(marker);
+    });
+}
 
 export default function() {
     const url = `./commuter-positions/${window.commuterPositionsJsonFile}.json`;
@@ -40,15 +70,26 @@ function startEverything(commuterPositionsData) {
         }
     });
 
-    let pointsMap = L.map("points-map", {
-        preferCanvas: true
-    }).setView(
-        [
-            commuterPositionsData.originPosition.latitude,
-            commuterPositionsData.originPosition.longitude
-        ],
-        9
+    const originPosition = {
+        latitude: commuterPositionsData.originPosition.latitude,
+        longitude: commuterPositionsData.originPosition.longitude
+    };
+    const houseSalesStyle = new window.carto.style.CartoCSS(
+        mapHelper.getHouseSalesStyling(0.74, [
+            1500000,
+            3000000,
+            4500000,
+            6000000
+        ])
     );
+
+    showDifferenceDrivingPublicMap(commuterPositionsData, houseSalesStyle);
+
+    const map = mapHelper.initialiseAllMapFunctionality({
+        originPosition,
+        mapContainer: document.querySelector(".points-map"),
+        houseSalesStyle
+    });
 
     let selectedSeconds;
     let activeTransportation = "commute-public";
@@ -56,7 +97,15 @@ function startEverything(commuterPositionsData) {
         selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
 
-        updateCommutePositions(activeTransportation, selectedSeconds);
+        updateCommutePositions(
+            activeTransportation,
+            selectedSeconds,
+            map,
+            markers,
+            commuterPositionsData,
+            getColorHyf,
+            myRenderer
+        );
     });
 
     const transportationButtons = document.querySelectorAll(
@@ -64,98 +113,33 @@ function startEverything(commuterPositionsData) {
     );
     helper.toggleButtons([...transportationButtons], key => {
         if (key === "driving") {
-            updateCommutePositions("commute-driving", selectedSeconds);
+            updateCommutePositions(
+                "commute-driving",
+                selectedSeconds,
+                map,
+                markers,
+                commuterPositionsData,
+                getColorHyf,
+                myRenderer
+            );
             activeTransportation = "commute-driving";
         }
         if (key === "public") {
-            updateCommutePositions("commute-public", selectedSeconds);
+            updateCommutePositions(
+                "commute-public",
+                selectedSeconds,
+                map,
+                markers,
+                commuterPositionsData,
+                getColorHyf,
+                myRenderer
+            );
             activeTransportation = "commute-public";
         }
     });
+    const client = mapHelper.getClient();
 
-    function updateCommutePositions(key, selectedSeconds) {
-        markers.forEach(marker => {
-            pointsMap.removeLayer(marker);
-        });
-
-        const filteresCommuterPositions = commuterPositionsData.commuterPositions.filter(
-            commute => commute[key] < selectedSeconds && commute[key] > 0
-        );
-        filteresCommuterPositions.forEach(commute => {
-            const marker = L.circleMarker(
-                [commute.latitude, commute.longitude],
-                {
-                    // color: getColorDifference(
-                    //     commute["driving-public-difference"]
-                    // ),
-                    color: getColorHyf(commute[key]),
-                    stroke: false,
-                    radius: 3,
-                    opacity: 1,
-                    renderer: myRenderer,
-                    fillOpacity: 1
-                }
-            ).addTo(pointsMap);
-
-            markers.push(marker);
-        });
-    }
-
-    L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-        {
-            maxZoom: 18
-        }
-    ).addTo(pointsMap);
-
-    const client = new window.carto.Client({
-        apiKey: "okNxK8jzzM39Lpj-7ZHYcw",
-        username: "benna100"
-    });
-
-    const hexagonSizes = 15;
-    const houseSalesSourceDenmark = new window.carto.source.SQL(`
-              -- Create hexagon grid
-              WITH hgrid AS (
-                  SELECT CDB_HexagonGrid(
-                      ST_Expand(!bbox!, CDB_XYZ_Resolution(9) * ${hexagonSizes}),
-                      CDB_XYZ_Resolution(9) * ${hexagonSizes}) as cell
-                  )
-    
-              -- select the data from the "virtual table" hgrid, which has been created
-              -- using the "WITH" statement of PostgreSQL,
-              -- that intesects with the dataset of points "stormevents_locations_2014"
-    
-              SELECT  hgrid.cell as the_geom_webmercator,
-                      avg(price) as agg_value,
-                      row_number() over () as cartodb_id
-              FROM hgrid, (SELECT * FROM house_sales_denmark) i
-              WHERE ST_Intersects(i.the_geom_webmercator, hgrid.cell) AND price != 0
-              GROUP BY hgrid.cell
-    
-            `);
-
-    const houseSalesStyle = new window.carto.style.CartoCSS(`
-        #layer {
-          polygon-opacity: 0.74;
-    
-          [agg_value > 0] {
-            polygon-fill: #fcbba1;
-          }
-          [agg_value > 1500000] {
-            polygon-fill: #fc9272;
-          }
-          [agg_value > 3000000] {
-            polygon-fill: #fb6a4a;
-          }
-          [agg_value > 4500000] {
-            polygon-fill: #de2d26;
-          }
-          [agg_value > 6000000] {
-            polygon-fill: #a50f15;
-          }
-        }
-            `);
+    const houseSalesSourceDenmark = mapHelper.getHouseSalesSourceDenmark();
 
     const houseSalesDenmarkLayer = new window.carto.layer.Layer(
         houseSalesSourceDenmark,
@@ -163,7 +147,7 @@ function startEverything(commuterPositionsData) {
     );
 
     client.addLayer(houseSalesDenmarkLayer);
-    client.getLeafletLayer().addTo(pointsMap);
+    client.getLeafletLayer().addTo(map);
     houseSalesDenmarkLayer.hide();
 
     const houseSalesToggleButtons = document.querySelectorAll(
@@ -191,15 +175,6 @@ function startEverything(commuterPositionsData) {
         if (duration > 0) return "#d0d1e6";
     }
 
-    function getColorDifference(duration) {
-        // console.log(duration);
-        if (duration > -25) return "#045a8d";
-        if (duration > -50) return "#2b8cbe";
-        if (duration > -75) return "#74a9cf";
-        if (duration > -100) return "#a6bddb";
-        if (duration > -120) return "#d0d1e6";
-    }
-
     function getColorNovo(duration) {
         return "#ffff39";
         if (duration > 4800) return "yellow";
@@ -212,49 +187,97 @@ function startEverything(commuterPositionsData) {
     const marker = L.marker([
         commuterPositionsData.originPosition.latitude,
         commuterPositionsData.originPosition.longitude
-    ]).addTo(pointsMap);
+    ]).addTo(map);
     marker.bindPopup("Pendlerkort udgangspunkt");
 
-    updateCommutePositions("commute-public", selectedSeconds);
-
-    const mapToggleLabel = document.querySelector(".map-active label");
-    const mapToggleInput = document.querySelector(".map-active input");
-    const scrollPageSpan = document.querySelector(
-        ".map-active span.scroll-page"
+    updateCommutePositions(
+        "commute-public",
+        selectedSeconds,
+        map,
+        markers,
+        commuterPositionsData,
+        getColorHyf,
+        myRenderer
     );
-    const activeMapElement = document.querySelector(".map-active");
-    const scrollMapSpan = document.querySelector(".map-active span.scroll-map");
-    const pointsMapElement = document.querySelector("#points-map");
 
-    helper.toggleMobileFunctionality({
-        activeMapElement,
-        pointsMapElement,
-        scrollMapSpan,
-        scrollPageSpan,
-        pointsMap,
-        mapToggleInput
-    });
+    window.currentIntervals = [1500000, 3000000, 4500000, 6000000];
+}
 
-    const copenhagenIntervals = [1500000, 3000000, 4500000, 6000000];
-    let isZoomLevelAboveThresholdPrev = false;
-    pointsMap.on("zoom", a => {
-        const newZoom = a.target._zoom;
-        const isZoomLevelAboveThresholdCurrent = newZoom > 10;
+function showDifferenceDrivingPublicMap(
+    commuterPositionsData,
+    houseSalesStyle
+) {
+    const markers = [];
+    const minMaxObject = {
+        min: 1000,
+        max: -1000
+    };
+    const commutePoints = commuterPositionsData.commuterPositions.map(
+        commuteNovo => {
+            const objectToReturn = commuteNovo;
 
-        if (
-            isZoomLevelAboveThresholdPrev !== isZoomLevelAboveThresholdCurrent
-        ) {
-            if (isZoomLevelAboveThresholdCurrent) {
-                houseSalesStyle.setContent(
-                    helper.getHouseSalesStyling(0.3, copenhagenIntervals)
-                );
-            } else {
-                houseSalesStyle.setContent(
-                    helper.getHouseSalesStyling(0.74, copenhagenIntervals)
-                );
+            if (commuteNovo["commute-public"] === null) {
+                objectToReturn["driving-public-difference"] = null;
+
+                return objectToReturn;
             }
-        }
 
-        isZoomLevelAboveThresholdPrev = isZoomLevelAboveThresholdCurrent;
+            const difference =
+                commuteNovo["commute-driving"] - commuteNovo["commute-public"];
+            const aggregate =
+                commuteNovo["commute-driving"] + commuteNovo["commute-public"];
+
+            // https://www.mathsisfun.com/percentage-difference.html
+            const percentageDifference = (difference / (aggregate / 2)) * 100;
+            objectToReturn["driving-public-difference"] = percentageDifference;
+            if (percentageDifference < minMaxObject.min) {
+                minMaxObject.min = percentageDifference;
+            }
+
+            if (percentageDifference > minMaxObject.max) {
+                minMaxObject.max = percentageDifference;
+            }
+            return objectToReturn;
+        }
+    );
+
+    const range = minMaxObject.max - minMaxObject.min;
+    const numberOfColorIntervals = 6;
+    const rangePerInterval = range / numberOfColorIntervals;
+    const intervals = [];
+    for (let i = 0; i < numberOfColorIntervals; i++) {
+        intervals.push((i + 1) * rangePerInterval + minMaxObject.min);
+    }
+
+    const myRenderer = L.canvas({ padding: 0.5 });
+
+    const originPosition = {
+        latitude: commuterPositionsData.originPosition.latitude,
+        longitude: commuterPositionsData.originPosition.longitude
+    };
+    const map = mapHelper.initialiseAllMapFunctionality({
+        originPosition,
+        mapContainer: document.querySelector(".car-public-difference-map"),
+        houseSalesStyle
     });
+
+    function getColorDifference(duration, intervals) {
+        // console.log(duration);
+        if (duration > intervals[4]) return "#045a8d";
+        if (duration > intervals[3]) return "#2b8cbe";
+        if (duration > intervals[2]) return "#74a9cf";
+        if (duration > intervals[1]) return "#a6bddb";
+        if (duration > intervals[0]) return "#d0d1e6";
+    }
+
+    updateCommutePositions(
+        "driving-public-difference",
+        10000000,
+        map,
+        markers,
+        commuterPositionsData,
+        getColorDifference,
+        myRenderer,
+        intervals
+    );
 }
