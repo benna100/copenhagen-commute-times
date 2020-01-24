@@ -107,6 +107,16 @@ module.exports = {
                 };
             }
         }),
+        new HtmlWebpackPlugin({
+            filename: "horkaer-18-herlev.html",
+            template: "./src/pages/custom-map-template.ejs",
+            templateParameters: function(compilation, assets, options) {
+                return {
+                    commuterPositionsFileName: "horkaer-18-herlev",
+                    originalAdress: "Hørkær 18, Herlev"
+                };
+            }
+        }),
         new CopyPlugin([
             { from: "./src/commuter-positions", to: "commuter-positions" }
         ])

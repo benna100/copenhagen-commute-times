@@ -113,6 +113,16 @@ module.exports = {
             }
         }),
         new HtmlWebpackPlugin({
+            filename: "horkaer-18-herlev.html",
+            template: "./src/pages/custom-map-template.ejs",
+            templateParameters: function(compilation, assets, options) {
+                return {
+                    commuterPositionsFileName: "horkaer-18-herlev",
+                    originalAdress: "Hørkær 18, Herlev"
+                };
+            }
+        }),
+        new HtmlWebpackPlugin({
             filename: "form-submit.html",
             template: "./src/pages/form-submit.html"
         }),
