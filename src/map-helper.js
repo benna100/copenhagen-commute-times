@@ -11,6 +11,7 @@ function toggleMobileFunctionality({
     function setCheckbox(setChecked) {
         mapToggleInput.checked = setChecked;
     }
+
     if (helper.isTouchEnabled()) {
         activateMapElement.classList.remove("hidden");
 
@@ -48,7 +49,7 @@ function toggleMobileFunctionality({
         }
 
         document
-            .querySelector(".points-map-container")
+            .querySelector(".map-container")
             .addEventListener("touchmove", handleMove, false);
         function handleMove(evt) {
             var touches = evt.changedTouches;
@@ -57,6 +58,7 @@ function toggleMobileFunctionality({
             }
         }
         map.dragging.disable();
+        console.log(mapToggleInput);
         mapToggleInput.addEventListener("change", () => {
             scrollPageSpan.classList.remove("active");
             scrollMapSpan.classList.remove("active");
@@ -168,12 +170,12 @@ function initialiseAllMapFunctionality({
 
     const activateMapElement = mapContainer.querySelector(".map-activate");
     const scrollMapSpan = mapContainer.querySelector(
-        ".map-active span.scroll-map"
+        ".map-activate span.scroll-map"
     );
     const scrollPageSpan = mapContainer.querySelector(
-        ".map-active span.scroll-page"
+        ".map-activate span.scroll-page"
     );
-    const mapToggleInput = mapContainer.querySelector(".map-active input");
+    const mapToggleInput = mapContainer.querySelector(".map-activate input");
     toggleMobileFunctionality({
         activateMapElement,
         mapElement,
