@@ -93,8 +93,24 @@ module.exports = {
             template: "./src/pages/analysis.html"
         }),
         new HtmlWebpackPlugin({
-            filename: "novo-nordisk.html",
-            template: "./src/pages/custom-pages/novo-nordisk.html"
+            filename: "brennum-park-1-3400-hillerod.html",
+            template: "./src/pages/custom-map-template.ejs",
+            templateParameters: function(compilation, assets, options) {
+                return {
+                    commuterPositionsFileName: "brennum-park-1-3400-hillerod",
+                    originalAdress: "Brennum park 1 3400 Hillerod"
+                };
+            }
+        }),
+        new HtmlWebpackPlugin({
+            filename: "guldbergs-have-2200-n.html",
+            template: "./src/pages/custom-map-template.ejs",
+            templateParameters: function(compilation, assets, options) {
+                return {
+                    commuterPositionsFileName: "guldbergs-have-2200-n",
+                    originalAdress: "Guldbergs have 2200 n"
+                };
+            }
         }),
         new HtmlWebpackPlugin({
             filename: "form-submit.html",

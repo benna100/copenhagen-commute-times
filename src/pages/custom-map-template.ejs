@@ -64,7 +64,8 @@
             content="Find billige boligområder med kort pendlerafstand. Det er gratis, nemt og hurtigt!"
         />
         <script>
-            window.commuterPositionsJsonFile = "brennum-park-1-3400-hillerod";
+            window.commuterPositionsJsonFile =
+                "<%= commuterPositionsFileName %>";
         </script>
     </head>
 
@@ -73,11 +74,9 @@
             <a href="/">Billige-boliger.nu</a>
         </header>
         <main>
-            <h1>
-                Pendlerkort for <strong>Brennum park 1 3400 Hillerød</strong>
-            </h1>
+            <h1>Pendlerkort for <strong><%= originalAdress %></strong></h1>
             <p>
-                Se hvor hurtigt du kan pendle til Brennum park 1 3400 Hillerød.
+                Se hvor hurtigt du kan pendle til <%= originalAdress %>.
             </p>
             <section class="points-map">
                 <div class="map-activate hidden">
