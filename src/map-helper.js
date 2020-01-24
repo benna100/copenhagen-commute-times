@@ -58,7 +58,6 @@ function toggleMobileFunctionality({
             }
         }
         map.dragging.disable();
-        console.log(mapToggleInput);
         mapToggleInput.addEventListener("change", () => {
             scrollPageSpan.classList.remove("active");
             scrollMapSpan.classList.remove("active");
@@ -176,6 +175,7 @@ function initialiseAllMapFunctionality({
         ".map-activate span.scroll-page"
     );
     const mapToggleInput = mapContainer.querySelector(".map-activate input");
+
     toggleMobileFunctionality({
         activateMapElement,
         mapElement,
@@ -189,7 +189,6 @@ function initialiseAllMapFunctionality({
 }
 
 export default {
-    toggleMobileFunctionality,
     getHouseSalesStyling,
     initialiseAllMapFunctionality,
     getClient,
