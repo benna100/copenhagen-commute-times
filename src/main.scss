@@ -147,7 +147,10 @@ strong.highlight {
 
         li:nth-child(1),
         li:nth-child(2),
-        li:nth-child(3) {
+        li:nth-child(3),
+        li:nth-child(4),
+        li:nth-child(5),
+        li:nth-child(6) {
             margin-right: 8px;
 
             @media screen and (max-width: 450px) {

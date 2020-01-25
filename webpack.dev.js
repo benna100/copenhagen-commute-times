@@ -39,31 +39,6 @@ _getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(file => {
     );
 });
 
-console.log(customPages);
-
-// const customPages = [
-//     new HtmlWebpackPlugin({
-//         filename: "guldbergs-have-2200-n.html",
-//         template: "./src/pages/custom-map-template.ejs",
-//         templateParameters: function(compilation, assets, options) {
-//             return {
-//                 commuterPositionsFileName: "guldbergs-have-2200-n",
-//                 originalAdress: "Guldbergs have 2200 n"
-//             };
-//         }
-//     }),
-//     new HtmlWebpackPlugin({
-//         filename: "horkaer-18-herlev.html",
-//         template: "./src/pages/custom-map-template.ejs",
-//         templateParameters: function(compilation, assets, options) {
-//             return {
-//                 commuterPositionsFileName: "horkaer-18-herlev",
-//                 originalAdress: "Hørkær 18, Herlev"
-//             };
-//         }
-//     })
-// ];
-
 module.exports = {
     devtool: "eval-cheap-module-source-map",
     entry: "./src/index.js",
