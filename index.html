@@ -93,19 +93,45 @@
             </p>
             <br />
             <div class="select-city">
-                <p><strong>Vælg by</strong></p>
-                <ul>
-                    <li>
-                        <button data-key="copenhagen" class="active">
-                            København
-                        </button>
-                    </li>
-                    <li><button data-key="banegrdspladsen-1-8000-aarhus">Århus</button></li>
-                    <li><button data-key="john-f.-kennedys-pl.-3-9000-aalborg">Aalborg</button></li>
-                    <li><button data-key="odense">Odense</button></li>
-                    <li><button data-key="jernbanegade-31-6700-esbjerg">Esbjerg</button></li>
-                    <li><button data-key="jernbanegade-29-8900-randers">Randers</button></li>
-                </ul>
+                <div class="wrapper">
+                    <select>
+                        <option
+                            data-center="57.043307,9.917592"
+                            value="john-f.-kennedys-pl.-3-9000-aalborg"
+                            >Aalborg</option
+                        >
+                        <option
+                            data-center="55.467885,8.457798"
+                            value="jernbanegade-31-6700-esbjerg"
+                            >Esbjerg</option
+                        >
+                        <option
+                            data-center="56.033675,12.614805"
+                            value="stationspladsen-2-3000-helsingor"
+                            >Helsingør</option
+                        >
+                        <option
+                            data-center="55.683332,12.57166"
+                            value="copenhagen"
+                            >København</option
+                        >
+                        <option data-center="55.401411,10.386118" value="odense"
+                            >Odense</option
+                        >
+
+                        <option
+                            data-center="56.46175,10.024204"
+                            value="jernbanegade-29-8900-randers"
+                            >Randers</option
+                        >
+                        <option
+                            data-center="56.150669,10.20451"
+                            value="banegrdspladsen-1-8000-aarhus"
+                            >Århus</option
+                        >
+                    </select>
+                    <button>Vælg by</button>
+                </div>
             </div>
 
             <section class="points-map">

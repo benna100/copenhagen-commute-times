@@ -63,14 +63,7 @@ function updateCommutePositions(
 }
 
 export default async function() {
-    const commuterPositionFilenames = [
-        "copenhagen",
-        "banegrdspladsen-1-8000-aarhus",
-        "odense",
-        "john-f.-kennedys-pl.-3-9000-aalborg",
-        "jernbanegade-29-8900-randers",
-        "jernbanegade-31-6700-esbjerg"
-    ];
+    const commuterPositionFilenames = ["copenhagen"];
     const commuterPositionUrls = commuterPositionFilenames.map(
         commuterPositionFilename =>
             `./commuter-positions/${commuterPositionFilename}.json`
@@ -90,7 +83,6 @@ export default async function() {
 }
 
 function startEverything(commuterPositions) {
-    console.log(commuterPositions);
     window.activeCommuterPositions = commuterPositions[0];
     const myRenderer = L.canvas({ padding: 0.5 });
 
@@ -224,7 +216,7 @@ function startEverything(commuterPositions) {
         }
     });
 
-    const marker = L.marker([
+    let marker = L.marker([
         window.activeCommuterPositions.originPosition.latitude,
         window.activeCommuterPositions.originPosition.longitude
     ]).addTo(map);
@@ -260,11 +252,16 @@ function startEverything(commuterPositions) {
                     originPosition
                 );
             }, 500);
+            map.removeLayer(marker);
+            marker = L.marker([
+                window.activeCommuterPositions.originPosition.latitude,
+                window.activeCommuterPositions.originPosition.longitude
+            ]).addTo(map);
         }
     });
 }
 
-function selectActiveCity({
+async function selectActiveCity({
     map,
     houseSalesStyle,
     commuterPositions,
@@ -293,14 +290,6 @@ function selectActiveCity({
         }
 
         window.activeCommuterPositions = relevantCommuterPosition;
-        map.flyTo([
-            helper.isMobileDevice()
-                ? relevantCommuterPosition["originPosition"].latitude * 1.001
-                : relevantCommuterPosition["originPosition"].latitude,
-            helper.isMobileDevice()
-                ? relevantCommuterPosition["originPosition"].longitude
-                : relevantCommuterPosition["originPosition"].longitude * 1.02
-        ]);
 
         houseSalesStyle.setContent(
             mapHelper.getHouseSalesStyling(0.74, interval)
@@ -309,13 +298,33 @@ function selectActiveCity({
         window.currentIntervals = interval;
     }
 
-    helper.toggleButtons([...selectCityButtons], key => {
-        const relevantCommuterPosition = commuterPositions.find(
-            commuterPosition => commuterPosition["slugifiedAdress"] === key
+    const selectCityElement = document.querySelector(".select-city select");
+    const selectCityButton = document.querySelector(".select-city button");
+    selectCityButton.addEventListener("click", async () => {
+        const selectedCity =
+            selectCityElement.options[selectCityElement.selectedIndex].value;
+        const center = selectCityElement.options[
+            selectCityElement.selectedIndex
+        ]
+            .getAttribute("data-center")
+            .split(",");
+
+        setTimeout(() => {
+            map.flyTo([
+                helper.isMobileDevice() ? center[0] * 1.001 : center[0],
+                helper.isMobileDevice() ? center[1] : center[1] * 1.02
+            ]);
+        }, 0);
+
+        const relevantCommuterPositionResponse = await fetch(
+            `./commuter-positions/${selectedCity}.json`
         );
+        const relevantCommuterPosition = await relevantCommuterPositionResponse.json();
 
         cityClicked(relevantCommuterPosition);
 
         functionDone();
     });
+
+    // helper.toggleButtons([...selectCityButtons], key => {});
 }
