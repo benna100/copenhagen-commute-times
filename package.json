@@ -49,6 +49,7 @@
         "regenerator-runtime": "^0.13.3",
         "sass-loader": "^6.0.7",
         "scroll-to-element": "^2.0.3",
+        "sitemap-webpack-plugin": "^0.6.0",
         "social-tags-webpack-plugin": "^1.1.0",
         "source-map-loader": "^0.2.3",
         "style-loader": "^0.20.3",

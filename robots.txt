@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /*.html$
+Sitemap: https://billige-boliger.nu/sitemap.xml

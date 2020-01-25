@@ -9,6 +9,8 @@ const SocialTags = require("social-tags-webpack-plugin");
 const CnameWebpackPlugin = require("cname-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
+const SitemapPlugin = require("sitemap-webpack-plugin").default;
+
 const buildPath = path.resolve(__dirname, "dist");
 
 const _getAllFilesFromFolder = function(dir) {
@@ -29,23 +31,58 @@ const _getAllFilesFromFolder = function(dir) {
 };
 
 const customPages = [];
-_getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(file => {
-    const commuterPositions = require(`./src/commuter-positions/${file}`);
-
-    customPages.push(
-        new HtmlWebpackPlugin({
-            filename: `${commuterPositions.slugifiedAdress}.html`,
-            template: "./src/pages/custom-map-template.ejs",
-            templateParameters: function(compilation, assets, options) {
-                return {
-                    commuterPositionsFileName:
-                        commuterPositions.slugifiedAdress,
-                    originalAdress: commuterPositions.originalAdresses[0]
-                };
-            }
-        })
+const allUrls = [];
+function createCustomPages() {
+    _getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(
+        file => {
+            const commuterPositions = require(`./src/commuter-positions/${file}`);
+            allUrls.push(`/${commuterPositions.slugifiedAdress}/`);
+            customPages.push(
+                new HtmlWebpackPlugin({
+                    filename: `${commuterPositions.slugifiedAdress}.html`,
+                    template: "./src/pages/custom-map-template.ejs",
+                    templateParameters: function(compilation, assets, options) {
+                        return {
+                            commuterPositionsFileName:
+                                commuterPositions.slugifiedAdress,
+                            originalAdress:
+                                commuterPositions.originalAdresses[0]
+                        };
+                    }
+                })
+            );
+        }
     );
-});
+}
+createCustomPages();
+
+const cheapestSeoPages = [];
+function createCheapestSeoPages() {
+    _getAllFilesFromFolder(__dirname + "/src/commuter-positions")
+        .filter(file => file.substr(0, 4) === "city")
+        .forEach(file => {
+            const commuterPositions = require(`./src/commuter-positions/${file}`);
+            allUrls.push(`/billige-huse/${commuterPositions.cityName}/`);
+            customPages.push(
+                new HtmlWebpackPlugin({
+                    filename: `billige-huse/${commuterPositions.cityName}.html`,
+                    template: "./src/pages/cheapest-cities-short-distance.ejs",
+                    templateParameters: function(compilation, assets, options) {
+                        return {
+                            commuterPositionsFileName:
+                                commuterPositions.slugifiedAdress,
+                            cityName: commuterPositions.cityName
+                        };
+                    }
+                })
+            );
+        });
+}
+
+createCheapestSeoPages();
+
+/* basic paths -- directly compatible with static-site-generator-webpack-plugin */
+const paths = [...allUrls];
 
 module.exports = {
     devtool: "source-map",
@@ -210,6 +247,8 @@ module.exports = {
         }),
         new CopyPlugin([
             { from: "./src/commuter-positions", to: "commuter-positions" }
-        ])
+        ]),
+        new CopyPlugin([{ from: "./robots.txt", to: "" }]),
+        new SitemapPlugin("https://billige-boliger.nu/", paths)
     ]
 };

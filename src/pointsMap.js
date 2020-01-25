@@ -55,7 +55,8 @@ function updateCommutePositions(
             radius: 3,
             opacity: 1,
             renderer: renderer,
-            fillOpacity: 1
+            fillOpacity: 1,
+            interactive: false
         }).addTo(map);
 
         markers.push(marker);
@@ -66,7 +67,7 @@ export default async function() {
     const commuterPositionFilenames = ["copenhagen"];
     const commuterPositionUrls = commuterPositionFilenames.map(
         commuterPositionFilename =>
-            `./commuter-positions/${commuterPositionFilename}.json`
+            `./commuter-positions/city-${commuterPositionFilename}.json`
     );
     const commuterPositionFetchPromises = commuterPositionUrls.map(
         commuterPositionUrl => fetch(commuterPositionUrl)
@@ -219,8 +220,9 @@ function startEverything(commuterPositions) {
     let marker = L.marker([
         window.activeCommuterPositions.originPosition.latitude,
         window.activeCommuterPositions.originPosition.longitude
-    ]).addTo(map);
-    marker.bindPopup("Pendlerkort udgangspunkt");
+    ])
+        .bindPopup("Pendlerkort udgangspunkt")
+        .addTo(map);
 
     updateCommutePositions(
         "commute-public",
@@ -317,7 +319,7 @@ async function selectActiveCity({
         }, 0);
 
         const relevantCommuterPositionResponse = await fetch(
-            `./commuter-positions/${selectedCity}.json`
+            `./commuter-positions/city-${selectedCity}.json`
         );
         const relevantCommuterPosition = await relevantCommuterPositionResponse.json();
 

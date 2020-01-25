@@ -21,23 +21,54 @@ const _getAllFilesFromFolder = function(dir) {
 };
 
 const customPages = [];
-_getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(file => {
-    const commuterPositions = require(`./src/commuter-positions/${file}`);
+function createCustomPages() {
+    _getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(
+        file => {
+            const commuterPositions = require(`./src/commuter-positions/${file}`);
 
-    customPages.push(
-        new HtmlWebpackPlugin({
-            filename: `${commuterPositions.slugifiedAdress}.html`,
-            template: "./src/pages/custom-map-template.ejs",
-            templateParameters: function(compilation, assets, options) {
-                return {
-                    commuterPositionsFileName:
-                        commuterPositions.slugifiedAdress,
-                    originalAdress: commuterPositions.originalAdresses[0]
-                };
-            }
-        })
+            customPages.push(
+                new HtmlWebpackPlugin({
+                    filename: `${commuterPositions.slugifiedAdress}.html`,
+                    template: "./src/pages/custom-map-template.ejs",
+                    templateParameters: function(compilation, assets, options) {
+                        return {
+                            commuterPositionsFileName:
+                                commuterPositions.slugifiedAdress,
+                            originalAdress:
+                                commuterPositions.originalAdresses[0]
+                        };
+                    }
+                })
+            );
+        }
     );
-});
+}
+createCustomPages();
+
+const cheapestSeoPages = [];
+function createCheapestSeoPages() {
+    _getAllFilesFromFolder(__dirname + "/src/commuter-positions")
+        .filter(file => file.substr(0, 4) === "city")
+        .forEach(file => {
+            const commuterPositions = require(`./src/commuter-positions/${file}`);
+
+            customPages.push(
+                new HtmlWebpackPlugin({
+                    filename: `billige-huse/${commuterPositions.cityName}.html`,
+                    template: "./src/pages/cheapest-cities-short-distance.ejs",
+                    templateParameters: function(compilation, assets, options) {
+                        return {
+                            commuterPositionsFileName:
+                                commuterPositions.slugifiedAdress,
+                            cityName: commuterPositions.cityName
+                        };
+                    }
+                })
+            );
+        });
+}
+
+createCheapestSeoPages();
 
 module.exports = {
     devtool: "eval-cheap-module-source-map",

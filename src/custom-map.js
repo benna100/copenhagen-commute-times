@@ -54,7 +54,8 @@ function updateCommutePositions(
             radius: 3,
             opacity: 1,
             renderer: renderer,
-            fillOpacity: 1
+            fillOpacity: 1,
+            interactive: false
         }).addTo(map);
 
         markers.push(marker);
@@ -62,7 +63,11 @@ function updateCommutePositions(
 }
 
 export default function() {
-    const url = `./commuter-positions/${window.commuterPositionsJsonFile}.json`;
+    console.log(window.commuterPositionsJsonFile);
+    const url =
+        window.commuterPositionsJsonFile.substr(0, 5) === "city-"
+            ? `./../commuter-positions/${window.commuterPositionsJsonFile}.json`
+            : `./commuter-positions/${window.commuterPositionsJsonFile}.json`;
 
     fetch(url)
         .then(response => response.json())
@@ -87,20 +92,23 @@ function startEverything(commuterPositionsData) {
         }
     });
 
+    if (window.commuterPositionsJsonFile === "city-copenhagen") {
+        window.currentIntervals = [1500000, 3000000, 4500000, 6000000];
+    } else {
+        window.currentIntervals = [500000, 1000000, 1500000, 2000000];
+    }
+
     const originPosition = {
         latitude: commuterPositionsData.originPosition.latitude,
         longitude: commuterPositionsData.originPosition.longitude
     };
     const houseSalesStyle = new window.carto.style.CartoCSS(
-        mapHelper.getHouseSalesStyling(0.74, [
-            1500000,
-            3000000,
-            4500000,
-            6000000
-        ])
+        mapHelper.getHouseSalesStyling(0.74, window.currentIntervals)
     );
 
-    showDifferenceDrivingPublicMap(commuterPositionsData, houseSalesStyle);
+    if (document.querySelector(".car-public-difference-map")) {
+        showDifferenceDrivingPublicMap(commuterPositionsData, houseSalesStyle);
+    }
 
     const map = mapHelper.initialiseAllMapFunctionality({
         originPosition,
@@ -236,8 +244,6 @@ function startEverything(commuterPositionsData) {
         myRenderer,
         originPosition
     );
-
-    window.currentIntervals = [1500000, 3000000, 4500000, 6000000];
 }
 
 function showDifferenceDrivingPublicMap(
