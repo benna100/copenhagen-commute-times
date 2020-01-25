@@ -67,7 +67,7 @@ export default async function() {
         "copenhagen",
         "banegrdspladsen-1-8000-aarhus",
         "odense",
-        "aalborg",
+        "john-f.-kennedys-pl.-3-9000-aalborg",
         "jernbanegade-29-8900-randers",
         "jernbanegade-31-6700-esbjerg"
     ];
