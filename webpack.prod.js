@@ -33,10 +33,11 @@ const _getAllFilesFromFolder = function(dir) {
 const customPages = [];
 const allUrls = [];
 function createCustomPages() {
-    _getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(
-        file => {
+    _getAllFilesFromFolder(__dirname + "/src/commuter-positions")
+        .filter(file => file.substr(0, 4) !== "city")
+        .forEach(file => {
             const commuterPositions = require(`./src/commuter-positions/${file}`);
-            allUrls.push(`/${commuterPositions.slugifiedAdress}/`);
+            allUrls.push(`/${commuterPositions.slugifiedAdress}`);
             customPages.push(
                 new HtmlWebpackPlugin({
                     filename: `${commuterPositions.slugifiedAdress}.html`,
@@ -51,8 +52,7 @@ function createCustomPages() {
                     }
                 })
             );
-        }
-    );
+        });
 }
 createCustomPages();
 
@@ -62,7 +62,7 @@ function createCheapestSeoPages() {
         .filter(file => file.substr(0, 4) === "city")
         .forEach(file => {
             const commuterPositions = require(`./src/commuter-positions/${file}`);
-            allUrls.push(`/billige-huse/${commuterPositions.cityName}/`);
+            allUrls.push(`/billige-huse/${commuterPositions.cityName}`);
             customPages.push(
                 new HtmlWebpackPlugin({
                     filename: `billige-huse/${commuterPositions.cityName}.html`,
