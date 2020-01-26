@@ -149,11 +149,48 @@ function countUpFromTo(from, to, element) {
     }
 }
 
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+    var results = regex.exec(location.search);
+    return results === null
+        ? ""
+        : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function updateQueryStringParameter({ key, value }) {
+    let baseUrl = [
+        location.protocol,
+        "//",
+        location.host,
+        location.pathname
+    ].join("");
+    let urlQueryString = document.location.search;
+    var newParam = key + "=" + value,
+        params = "?" + newParam;
+
+    // If the "search" string exists, then build params from it
+    if (urlQueryString) {
+        let keyRegex = new RegExp("([?&])" + key + "[^&]*");
+        // If param exists already, update it
+        let params;
+        if (urlQueryString.match(keyRegex) !== null) {
+            params = urlQueryString.replace(keyRegex, "$1" + newParam);
+        } else {
+            // Otherwise, add it to end of query string
+            params = urlQueryString + "&" + newParam;
+        }
+    }
+    window.history.replaceState({}, "", baseUrl + params);
+}
+
 export default {
     isMobileDevice,
     isTouchEnabled,
     toggleButtons,
     getPointsStyling,
     secondsToHms,
-    updateHouseSalesLegendCountUp
+    updateHouseSalesLegendCountUp,
+    getUrlParameter,
+    updateQueryStringParameter
 };

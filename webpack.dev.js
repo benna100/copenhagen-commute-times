@@ -2,6 +2,7 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const slugify = require("slugify");
 
 const _getAllFilesFromFolder = function(dir) {
     const filesystem = require("fs");
@@ -21,11 +22,13 @@ const _getAllFilesFromFolder = function(dir) {
 };
 
 const customPages = [];
+const allUrls = [];
 function createCustomPages() {
-    _getAllFilesFromFolder(__dirname + "/src/commuter-positions").forEach(
-        file => {
+    _getAllFilesFromFolder(__dirname + "/src/commuter-positions")
+        .filter(file => file.substr(0, 4) !== "city")
+        .forEach(file => {
             const commuterPositions = require(`./src/commuter-positions/${file}`);
-
+            allUrls.push(`/${commuterPositions.slugifiedAdress}`);
             customPages.push(
                 new HtmlWebpackPlugin({
                     filename: `${commuterPositions.slugifiedAdress}.html`,
@@ -40,8 +43,7 @@ function createCustomPages() {
                     }
                 })
             );
-        }
-    );
+        });
 }
 createCustomPages();
 
@@ -51,10 +53,17 @@ function createCheapestSeoPages() {
         .filter(file => file.substr(0, 4) === "city")
         .forEach(file => {
             const commuterPositions = require(`./src/commuter-positions/${file}`);
-
+            const cityName = slugify(commuterPositions.cityName, {
+                lower: true
+            });
+            const subUrl = slugify("tæt-på", {
+                lower: true
+            });
+            const url = `${subUrl}/${cityName}`;
+            allUrls.push(`/${url}`);
             customPages.push(
                 new HtmlWebpackPlugin({
-                    filename: `billige-huse/${commuterPositions.cityName}.html`,
+                    filename: `${url}.html`,
                     template: "./src/pages/cheapest-cities-short-distance.ejs",
                     templateParameters: function(compilation, assets, options) {
                         return {
@@ -69,6 +78,8 @@ function createCheapestSeoPages() {
 }
 
 createCheapestSeoPages();
+/* basic paths -- directly compatible with static-site-generator-webpack-plugin */
+const paths = [...allUrls];
 
 module.exports = {
     devtool: "eval-cheap-module-source-map",

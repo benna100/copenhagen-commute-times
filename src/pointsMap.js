@@ -3,6 +3,7 @@ import "nouislider/distribute/nouislider.css";
 
 import helper from "./helper";
 import mapHelper from "./map-helper";
+import slugify from "slugify";
 
 function updateCommutePositions(
     key,
@@ -64,11 +65,30 @@ function updateCommutePositions(
 }
 
 export default async function() {
-    const commuterPositionFilenames = ["copenhagen"];
+    const cityQueryParameter = helper.getUrlParameter("by");
+
+    let commuterPositionFilename = "copenhagen";
+    const selectCityOptions = document.querySelectorAll(
+        ".select-city select > option"
+    );
+
+    const queryParameterCityOptionsIndex = [...selectCityOptions]
+        .map(citiesList => slugify(citiesList.innerHTML, { lower: true }))
+        .indexOf(cityQueryParameter);
+
+    const isCityInQueryParameter = queryParameterCityOptionsIndex !== -1;
+    if (isCityInQueryParameter) {
+        commuterPositionFilename =
+            selectCityOptions[queryParameterCityOptionsIndex].value;
+        selectCityOptions[queryParameterCityOptionsIndex].selected = true;
+    }
+
+    const commuterPositionFilenames = [commuterPositionFilename];
     const commuterPositionUrls = commuterPositionFilenames.map(
         commuterPositionFilename =>
             `./commuter-positions/city-${commuterPositionFilename}.json`
     );
+
     const commuterPositionFetchPromises = commuterPositionUrls.map(
         commuterPositionUrl => fetch(commuterPositionUrl)
     );
@@ -303,8 +323,15 @@ async function selectActiveCity({
     const selectCityElement = document.querySelector(".select-city select");
     const selectCityButton = document.querySelector(".select-city button");
     selectCityButton.addEventListener("click", async () => {
-        const selectedCity =
-            selectCityElement.options[selectCityElement.selectedIndex].value;
+        const selectedOption =
+            selectCityElement.options[selectCityElement.selectedIndex];
+        const selectedCity = selectedOption.value;
+
+        helper.updateQueryStringParameter({
+            key: "by",
+            value: slugify(selectedOption.innerHTML, { lower: true })
+        });
+
         const center = selectCityElement.options[
             selectCityElement.selectedIndex
         ]
@@ -317,6 +344,8 @@ async function selectActiveCity({
                 helper.isMobileDevice() ? center[1] : center[1] * 1.02
             ]);
         }, 0);
+
+        // Maximum number of subsequent equal requests to the Maps API reached (3)
 
         const relevantCommuterPositionResponse = await fetch(
             `./commuter-positions/city-${selectedCity}.json`
