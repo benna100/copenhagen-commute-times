@@ -300,7 +300,6 @@ function showDifferenceDrivingPublicMap(
     });
 
     function getColorDifference(duration, intervals) {
-        // console.log(duration);
         if (duration > intervals[4]) return "#045a8d";
         if (duration > intervals[3]) return "#2b8cbe";
         if (duration > intervals[2]) return "#74a9cf";

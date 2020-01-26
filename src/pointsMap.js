@@ -255,7 +255,17 @@ function startEverything(commuterPositions) {
         originPosition
     );
 
-    window.currentIntervals = [1500000, 3000000, 4500000, 6000000];
+    const priceInterval = mapHelper.getPriceIntervalFromOrigin({
+        latitude: window.activeCommuterPositions.originPosition.latitude,
+        longitude: window.activeCommuterPositions.originPosition.longitude
+    });
+
+    // we count up but we dont actually need the counting, just to change the code
+    helper.updateHouseSalesLegendCountUp(
+        [500000, 1000000, 1500000, 2000000],
+        priceInterval
+    );
+    window.currentPriceIntervals = priceInterval;
 
     selectActiveCity({
         map,
@@ -313,11 +323,24 @@ async function selectActiveCity({
 
         window.activeCommuterPositions = relevantCommuterPosition;
 
-        houseSalesStyle.setContent(
-            mapHelper.getHouseSalesStyling(0.74, interval)
+        const priceInterval = mapHelper.getPriceIntervalFromOrigin({
+            latitude: window.activeCommuterPositions.originPosition.latitude,
+            longitude: window.activeCommuterPositions.originPosition.longitude
+        });
+
+        // we count up but we dont actually need the counting, just to change the code
+        helper.updateHouseSalesLegendCountUp(
+            window.currentPriceIntervals,
+            priceInterval
         );
-        helper.updateHouseSalesLegendCountUp(currentIntervals, interval);
-        window.currentIntervals = interval;
+        window.currentPriceIntervals = priceInterval;
+
+        if (!helper.arraysEqual(currentPriceIntervals, interval)) {
+            // We want to limit the cartodb usage!
+            houseSalesStyle.setContent(
+                mapHelper.getHouseSalesStyling(0.74, currentPriceIntervals)
+            );
+        }
     }
 
     const selectCityElement = document.querySelector(".select-city select");
@@ -344,8 +367,6 @@ async function selectActiveCity({
                 helper.isMobileDevice() ? center[1] : center[1] * 1.02
             ]);
         }, 0);
-
-        // Maximum number of subsequent equal requests to the Maps API reached (3)
 
         const relevantCommuterPositionResponse = await fetch(
             `./commuter-positions/city-${selectedCity}.json`
