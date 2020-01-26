@@ -265,6 +265,9 @@ function startEverything(commuterPositions) {
         [500000, 1000000, 1500000, 2000000],
         priceInterval
     );
+    houseSalesStyle.setContent(
+        mapHelper.getHouseSalesStyling(0.74, priceInterval)
+    );
     window.currentPriceIntervals = priceInterval;
 
     selectActiveCity({
@@ -324,8 +327,8 @@ async function selectActiveCity({
         window.activeCommuterPositions = relevantCommuterPosition;
 
         const priceInterval = mapHelper.getPriceIntervalFromOrigin({
-            latitude: window.activeCommuterPositions.originPosition.latitude,
-            longitude: window.activeCommuterPositions.originPosition.longitude
+            latitude: relevantCommuterPosition.originPosition.latitude,
+            longitude: relevantCommuterPosition.originPosition.longitude
         });
 
         // we count up but we dont actually need the counting, just to change the code
@@ -333,14 +336,15 @@ async function selectActiveCity({
             window.currentPriceIntervals,
             priceInterval
         );
-        window.currentPriceIntervals = priceInterval;
 
-        if (!helper.arraysEqual(currentPriceIntervals, interval)) {
+        if (!helper.arraysEqual(currentPriceIntervals, priceInterval)) {
             // We want to limit the cartodb usage!
             houseSalesStyle.setContent(
-                mapHelper.getHouseSalesStyling(0.74, currentPriceIntervals)
+                mapHelper.getHouseSalesStyling(0.74, priceInterval)
             );
         }
+
+        window.currentPriceIntervals = priceInterval;
     }
 
     const selectCityElement = document.querySelector(".select-city select");

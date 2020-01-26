@@ -24,10 +24,6 @@
             gtag("config", "UA-151608031-1");
         </script>
         <link
-            href="https://fonts.googleapis.com/css?family=Open+Sans:400,800"
-            rel="stylesheet"
-        />
-        <link
             href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700|Open+Sans:300,400,600"
             rel="stylesheet"
         />
@@ -40,19 +36,7 @@
         <!-- Include CARTO.js -->
         <script src="https://libs.cartocdn.com/carto.js/v4.1.11/carto.min.js"></script>
         <link
-            href="https://fonts.googleapis.com/css?family=Montserrat:600"
-            rel="stylesheet"
-        />
-        <link
-            href="https://fonts.googleapis.com/css?family=Open+Sans"
-            rel="stylesheet"
-        />
-        <link
             href="https://carto.com/developers/carto-js/examples/maps/public/style.css"
-            rel="stylesheet"
-        />
-        <link
-            href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
             rel="stylesheet"
         />
         <!-- Primary Meta Tags -->
@@ -95,47 +79,7 @@
             <div class="select-city">
                 <div class="wrapper">
                     <select>
-                        <option
-                            data-center="57.043307,9.917592"
-                            value="john-f.-kennedys-pl.-3-9000-aalborg"
-                            >Aalborg</option
-                        >
-                        <option
-                            data-center="55.467885,8.457798"
-                            value="jernbanegade-31-6700-esbjerg"
-                            >Esbjerg</option
-                        >
-                        <option
-                            data-center="56.033675,12.614805"
-                            value="stationspladsen-2-3000-helsingor"
-                            >Helsingør</option
-                        >
-                        <option
-                            data-center="55.490771,9.480743"
-                            value="banegrdspladsen-4-6000-kolding"
-                            selected
-                            >Kolding</option
-                        >
-                        <option
-                            data-center="55.683332,12.57166"
-                            value="copenhagen"
-                            selected
-                            >København</option
-                        >
-                        <option data-center="55.401411,10.386118" value="odense"
-                            >Odense</option
-                        >
-
-                        <option
-                            data-center="56.46175,10.024204"
-                            value="jernbanegade-29-8900-randers"
-                            >Randers</option
-                        >
-                        <option
-                            data-center="56.150669,10.20451"
-                            value="banegrdspladsen-1-8000-aarhus"
-                            >Århus</option
-                        >
+                        <%= cityOptions %>
                     </select>
                     <button>Vælg by</button>
                 </div>
@@ -210,7 +154,7 @@
                 <h2>Detaljer</h2>
                 <p>
                     De blå prikker viser
-                    <strong>hvor langt tid det tager</strong>, at
+                    <strong>hvor langt tid</strong> det tager, at
                     <strong>pendle ind til udgangspunktet</strong> med ankomst
                     kl 9:00.
                 </p>
@@ -239,7 +183,7 @@
                     og adressen på stedet du pendler til, så får du en email med
                     et link til dit interaktive kort. Se
                     <a
-                        href="brennum-park-1-3400-hillerod"
+                        href="/brennum-park-1-3400-hillerod"
                         target="_blank"
                         rel="noopener noreferrer"
                         >et eksempel</a

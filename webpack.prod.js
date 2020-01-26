@@ -88,6 +88,39 @@ function createCheapestSeoPages() {
 }
 
 createCheapestSeoPages();
+
+let cityOptions = "";
+_getAllFilesFromFolder(__dirname + "/src/commuter-positions")
+    .filter(file => file.substr(0, 4) === "city")
+    .map(file => require(`./src/commuter-positions/${file}`))
+    .sort(function(a, b) {
+        if (a.cityName < b.cityName) {
+            return -1;
+        }
+        if (a.cityName > b.cityName) {
+            return 1;
+        }
+        return 0;
+    })
+    .forEach(commuterPositions => {
+        const origin = commuterPositions.originPosition;
+        const selectedOrNot =
+            commuterPositions.slugifiedAdress === "copenhagen"
+                ? "selected"
+                : "";
+
+        const option = `
+        <option
+            data-center="${origin.latitude},${origin.longitude}"
+            value="${commuterPositions.slugifiedAdress}"
+            ${selectedOrNot}
+            >
+            ${commuterPositions.cityName}
+        </option>
+        `;
+
+        cityOptions += option;
+    });
 /* basic paths -- directly compatible with static-site-generator-webpack-plugin */
 const paths = [...allUrls];
 
@@ -164,9 +197,14 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "./index.html",
-            // Inject the js bundle at the end of the body of the given template
-            inject: "body"
+            template: "./index.ejs",
+            filename: `index.html`,
+            inject: "body",
+            templateParameters: function(compilation, assets, options) {
+                return {
+                    cityOptions
+                };
+            }
         }),
         new HtmlWebpackPlugin({
             filename: "analysis.html",
