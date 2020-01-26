@@ -208,10 +208,58 @@ function deg2rad(deg) {
     return deg * (Math.PI / 180);
 }
 
+function setPriceIntervals(commuterPositionsData) {
+    const previousInterval = [500000, 1000000, 1500000, 2000000];
+
+    const copenhagenPriceIntervals = [1500000, 3000000, 4500000, 6000000];
+    const aarhusPriceIntervals = [700000, 1400000, 2100000, 2800000];
+
+    const copenhagenCenter = {
+        latitude: 55.683332,
+        longitude: 12.57166
+    };
+
+    const aarhusCenter = {
+        latitude: 56.150669,
+        longitude: 10.20451
+    };
+
+    const distToCopenhagen = getDistanceFromLatLonInKm(
+        {
+            latitude: commuterPositionsData.originPosition.latitude,
+            longitude: commuterPositionsData.originPosition.longitude
+        },
+        copenhagenCenter
+    );
+
+    const distToAarhus = getDistanceFromLatLonInKm(
+        {
+            latitude: commuterPositionsData.originPosition.latitude,
+            longitude: commuterPositionsData.originPosition.longitude
+        },
+        aarhusCenter
+    );
+
+    window.currentPriceIntervals = previousInterval;
+    if (distToCopenhagen < 40) {
+        window.currentPriceIntervals = copenhagenPriceIntervals;
+    }
+
+    if (distToAarhus < 20) {
+        window.currentPriceIntervals = aarhusPriceIntervals;
+    }
+
+    helper.updateHouseSalesLegendCountUp(
+        previousInterval,
+        window.currentPriceIntervals
+    );
+}
+
 export default {
     getHouseSalesStyling,
     initialiseAllMapFunctionality,
     getClient,
     getHouseSalesSourceDenmark,
-    getDistanceFromLatLonInKm
+    getDistanceFromLatLonInKm,
+    setPriceIntervals
 };

@@ -111,6 +111,12 @@
                             >Helsingør</option
                         >
                         <option
+                            data-center="55.490771,9.480743"
+                            value="banegrdspladsen-4-6000-kolding"
+                            selected
+                            >Kolding</option
+                        >
+                        <option
                             data-center="55.683332,12.57166"
                             value="copenhagen"
                             selected
@@ -203,17 +209,18 @@
             <section>
                 <h2>Detaljer</h2>
                 <p>
-                    De blå prikker viser hvor langt fra den by man har valgt man
-                    kan bo og stadig
-                    <strong>ankomme til centrum kl 9:00.</strong>
+                    De blå prikker viser
+                    <strong>hvor langt tid det tager</strong>, at
+                    <strong>pendle ind til udgangspunktet</strong> med ankomst
+                    kl 9:00.
                 </p>
                 <p>
-                    💡🕵️ Hvis du vil finde de
+                    💡🕵️ Hvis du vil finde
                     <strong>områder med billige boliger</strong> så kig efter
                     <strong>de lysere røde områder</strong> med
                     <strong>blå prikker indeni.</strong>
-                    <a target="_blank" href="analysis#cheap-house-55-min"
-                        >Se eksempler</a
+                    <a target="_blank" href="/assets/cheap-houses-example.jpg"
+                        >Se hvad du skal kigge efter</a
                     >
                 </p>
                 <p>
@@ -249,11 +256,13 @@
                         type="email"
                         name="email"
                         placeholder="Skriv din email"
+                        required
                     />
                     <input
                         type="text"
                         name="adress"
                         placeholder="Skriv pendleradressen"
+                        required
                     />
                     <input
                         type="hidden"
@@ -269,91 +278,6 @@
                     <input type="text" name="_honey" style="display:none" />
                     <button type="submit">Få tilsendt kort</button>
                 </form>
-
-                <!-- <style type="text/css">
-                    @media screen and (min-width: 500px) {
-                        #mc_embed_signup_scroll {
-                            display: flex;
-                        }
-                    }
-                    .mc-field-group {
-                        width: 100%;
-                        margin-right: 12px;
-                    }
-                    /* Add your own Mailchimp form style overrides in your site stylesheet or in this style block.
-                    We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
-                </style>
-                <div id="mc_embed_signup">
-                    <form
-                        action="https://github.us17.list-manage.com/subscribe/post?u=0286749bd5e9f7614d3653c4f&amp;id=e22dfd19bf"
-                        method="post"
-                        id="mc-embedded-subscribe-form"
-                        name="mc-embedded-subscribe-form"
-                        class="validate"
-                        target="_blank"
-                        novalidate
-                    >
-                        <div id="mc_embed_signup_scroll">
-                            <div class="mc-field-group">
-                                <label for="mce-EMAIL">Email Address </label>
-                                <input
-                                    type="email"
-                                    value=""
-                                    name="EMAIL"
-                                    class="required email"
-                                    id="mce-EMAIL"
-                                    placeholder="Skriv din email"
-                                />
-                            </div>
-                            <div class="mc-field-group">
-                                <label for="mce-MMERGE1"
-                                    >Adresse <span class="asterisk">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    value=""
-                                    name="MMERGE1"
-                                    class="required"
-                                    id="mce-MMERGE1"
-                                    placeholder="Skriv din adresse"
-                                />
-                            </div>
-                            <div id="mce-responses" class="clear">
-                                <div
-                                    class="response"
-                                    id="mce-error-response"
-                                    style="display:none"
-                                ></div>
-                                <div
-                                    class="response"
-                                    id="mce-success-response"
-                                    style="display:none"
-                                ></div>
-                            </div>
-                            
-                            <div
-                                style="position: absolute; left: -5000px;"
-                                aria-hidden="true"
-                            >
-                                <input
-                                    type="text"
-                                    name="b_0286749bd5e9f7614d3653c4f_e22dfd19bf"
-                                    tabindex="-1"
-                                    value=""
-                                />
-                            </div>
-                            <div class="clear">
-                                <input
-                                    type="submit"
-                                    value="Tilsend mit kort"
-                                    name="subscribe"
-                                    id="mc-embedded-subscribe"
-                                    class="button"
-                                />
-                            </div>
-                        </div>
-                    </form>
-                </div> -->
             </section>
 
             <!-- <section class="donate">
