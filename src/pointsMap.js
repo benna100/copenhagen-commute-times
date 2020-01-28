@@ -5,6 +5,8 @@ import helper from "./helper";
 import mapHelper from "./map-helper";
 import slugify from "slugify";
 
+let setTimeouts = [];
+
 function updateCommutePositions(
     key,
     selectedSeconds,
@@ -20,6 +22,44 @@ function updateCommutePositions(
         map.removeLayer(marker);
     });
 
+    if (selectedSeconds > 4000) {
+        setTimeouts.forEach(setTimeout => clearTimeout(setTimeout));
+        setTimeouts = [];
+        const filteresCommuterPositions = commuterPositionsData.commuterPositions.filter(
+            commute => {
+                if (key === "driving-public-difference") {
+                    return commute[key] !== null;
+                } else {
+                    return commute[key] < selectedSeconds && commute[key] > 0;
+                }
+            }
+        );
+
+        filteresCommuterPositions.forEach(commute => {
+            setTimeouts.push(
+                setTimeout(() => {
+                    const marker = L.circleMarker(
+                        [commute.latitude, commute.longitude],
+                        {
+                            color: colorScheme(commute[key], intervals),
+                            stroke: false,
+                            radius: 3,
+                            opacity: 1,
+                            renderer: renderer,
+                            fillOpacity: 1,
+                            interactive: false
+                        }
+                    ).addTo(map);
+
+                    markers.push(marker);
+                }, 0)
+            );
+        });
+
+        return;
+    }
+
+    setTimeouts.forEach(setTimeout => clearTimeout(setTimeout));
     const filteresCommuterPositions = commuterPositionsData.commuterPositions.filter(
         commute => {
             if (key === "driving-public-difference") {
@@ -31,25 +71,6 @@ function updateCommutePositions(
     );
 
     filteresCommuterPositions.forEach(commute => {
-        // const distanceToCenter = mapHelper.getDistanceFromLatLonInKm(
-        //     {
-        //         latitude: commute.latitude,
-        //         longitude: commute.longitude
-        //     },
-        //     originPosition
-        // );
-
-        // let radius = 3;
-        // if (distanceToCenter >= 80) {
-        //     radius = 10;
-        // }
-        // if (distanceToCenter >= 50 && distanceToCenter < 80) {
-        //     radius = 7;
-        // }
-        // if (distanceToCenter < 50) {
-        //     radius = 3;
-        // }
-
         const marker = L.circleMarker([commute.latitude, commute.longitude], {
             color: colorScheme(commute[key], intervals),
             stroke: false,
@@ -164,7 +185,6 @@ function startEverything(commuterPositions) {
     slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
-
         updateCommutePositions(
             activeTransportation,
             selectedSeconds,

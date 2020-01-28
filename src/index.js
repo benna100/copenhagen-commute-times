@@ -1,5 +1,7 @@
 import "./main.scss";
 
+// const carto = require("carto.js");
+// window.carto = carto;
 import initializePointsMap from "./pointsMap.js";
 // import initializeHouseSalesMap from "./houseSalesMap.js";
 // import initializeHexbinMap from "./hexbinMap.js";
