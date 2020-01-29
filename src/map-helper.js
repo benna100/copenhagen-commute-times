@@ -138,12 +138,26 @@ function initialiseAllMapFunctionality({
     );
     map.scrollWheelZoom.disable();
 
-    window.L.tileLayer(
+    let cartoLayer = window.L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
         {
-            maxZoom: 18
+            maxZoom: 18,
+            zIndex: -1
         }
-    ).addTo(map);
+    );
+
+    let detailedLayer = window.L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            zIndex: -1
+        }
+    );
+
+    detailedLayer.addTo(map);
+    cartoLayer.addTo(map);
 
     let isZoomLevelAboveThresholdPrev = false;
 
@@ -157,7 +171,13 @@ function initialiseAllMapFunctionality({
                 houseSalesStyle.setContent(
                     getHouseSalesStyling(0.3, window.currentPriceIntervals)
                 );
+
+                map.removeLayer(cartoLayer);
+                map.addLayer(detailedLayer);
             } else {
+                map.removeLayer(detailedLayer);
+                map.addLayer(cartoLayer);
+
                 houseSalesStyle.setContent(
                     getHouseSalesStyling(0.74, window.currentPriceIntervals)
                 );
