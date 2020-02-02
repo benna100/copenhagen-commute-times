@@ -63,6 +63,7 @@ function createCheapestSeoPages() {
         .filter(file => file.substr(0, 4) === "city")
         .forEach(file => {
             const commuterPositions = require(`./src/commuter-positions/${file}`);
+            
             const cityName = slugify(commuterPositions.cityName, {
                 lower: true
             });
