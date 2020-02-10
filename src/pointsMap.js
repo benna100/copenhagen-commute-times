@@ -140,7 +140,8 @@ function startEverything(commuterPositions) {
         range: {
             min: 0,
             max: 8000
-        }
+        },
+        padding: [450, 450]
     });
 
     const originPosition = {
