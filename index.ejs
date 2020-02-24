@@ -41,49 +41,79 @@
         />
         <!-- Primary Meta Tags -->
         <title>
-            Billige boliger - Find billige boligområder med kort pendlerafstand
+            Billige boliger - For dig der hader at pendle langt
         </title>
         <meta
             name="description"
-            content="Find billige boligområder med kort pendlerafstand. Det er nemt, hurtigt og intuitivt!"
+            content="Billige-boliger.nu hjælper dig med at finde et sted at bo med kort pendlertid Det er nemt, hurtigt og intuitivt!"
         />
     </head>
 
     <body>
         <header>
-            <a href="/">Billige-boliger.nu</a>
+            <a class="logo" href="/">
+                <span class="logo">
+                    bb
+                </span>
+                <span>billige-boliger.nu</span>
+            </a>
         </header>
         <main>
-            <h1>
-                Find billige boligområder med kort pendlerafstand
-            </h1>
-            <p>
-                Min kæreste og jeg har den seneste tid
-                <strong
-                    >kigget efter boliger i kort pendlerafstand til
-                    København.</strong
+            <h1>For dig der <strong>hader at pendle langt</strong></h1>
+            <h2>
+                Billige-boliger.nu hjælper dig med at
+                <strong>finde et sted at bo</strong> med
+                <strong>kort pendlertid</strong>
+            </h2>
+            <section class="selector">
+                <form
+                    action=" https://formsubmit.co/benjamin.dals.hughes@gmail.com "
+                    method="POST"
                 >
-                Et spørgsmål jeg blev ved med at stille mig selv var:
-            </p>
-            <p>
-                <strong class="highlight">
-                    Hvordan kan jeg finde områder tæt på en storby med billige
-                    boliger?</strong
-                >
-            </p>
-            <p>
-                For at svare på netop det spørgsmål har jeg lavet et kort 🗺️
-                👇👇👇
-            </p>
-            <br />
-            <div class="select-city">
-                <div class="wrapper">
-                    <select>
-                        <%= cityOptions %>
-                    </select>
-                    <button>Vælg by</button>
+                    <input
+                        type="text"
+                        name="adress"
+                        placeholder="Skriv pendleradressen"
+                        required
+                    />
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Skriv din email"
+                        required
+                    />
+                    <input
+                        type="hidden"
+                        name="_next"
+                        value="https://billige-boliger.nu/form-submit"
+                    />
+                    <input
+                        type="hidden"
+                        name="_subject"
+                        value="New submission!"
+                    />
+                    <input type="hidden" name="_captcha" value="false" />
+                    <input type="text" name="_honey" style="display:none" />
+                    <button type="submit">Få tilsendt kort</button>
+                </form>
+
+                <span>Eller</span>
+
+                <!-- <ul>
+                <li>Udforsk områder med korte pendlertider</li>
+                <li>Vælg forskellige transportmidler</li>
+                <li>Se de gennemsnitlige boligpriser på kortet</li>
+            </ul> -->
+
+                <div class="select-city">
+                    <div class="wrapper">
+                        <select>
+                            <%= cityOptions %>
+                        </select>
+                        <button>Vælg by</button>
+                    </div>
                 </div>
-            </div>
+            </section>
 
             <section class="points-map">
                 <div class="map-activate hidden">
@@ -174,7 +204,7 @@
                 <br />
             </section>
 
-            <section class="notification">
+            <!-- <section class="notification">
                 <h2>Dit eget interaktive kort</h2>
                 <p>
                     Kan du bruge et
@@ -222,7 +252,7 @@
                     <input type="text" name="_honey" style="display:none" />
                     <button type="submit">Få tilsendt kort</button>
                 </form>
-            </section>
+            </section> -->
 
             <!-- <section class="donate">
                 <div class="donate-wrapper">

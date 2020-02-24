@@ -63,7 +63,7 @@ function createCheapestSeoPages() {
         .filter(file => file.substr(0, 4) === "city")
         .forEach(file => {
             const commuterPositions = require(`./src/commuter-positions/${file}`);
-            
+
             const cityName = slugify(commuterPositions.cityName, {
                 lower: true
             });
@@ -268,12 +268,11 @@ module.exports = {
                 "fb:app_id": "123456789",
                 "og:url": "https://billige-boliger.nu",
                 "og:type": "website",
-                "og:title": "Find billige boligområder med kort pendlerafstand",
+                "og:title": "Find et sted at bo med kort pendlertid",
                 "og:image": "./src/assets/social-facebook-image.jpg",
                 "og:description":
                     "Det er nemt, hurtigt og intuitivt! Så hvad venter du på?",
-                "og:site_name":
-                    "Find billige boligområder med kort pendlerafstand",
+                "og:site_name": "Find et sted at bo med kort pendlertid",
                 "og:locale": "da",
                 "og:article:author": "Benjamin Hughes"
             },
@@ -281,8 +280,7 @@ module.exports = {
                 "twitter:card": "summary_large_image",
                 "twitter:creator": "@dalshughes",
                 "twitter:url": "https://billige-boliger.nu",
-                "twitter:title":
-                    "Find billige boligområder med kort pendlerafstand",
+                "twitter:title": "Find et sted at bo med kort pendlertid",
                 "twitter:description":
                     "Det er nemt, hurtigt og intuitivt! Så hvad venter du på?",
                 "twitter:image": "./src/assets/social-twitter-image.jpg"

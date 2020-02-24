@@ -98,7 +98,6 @@ _getAllFilesFromFolder(__dirname + "/src/commuter-positions")
             commuterPositions.slugifiedAdress === "copenhagen"
                 ? "selected"
                 : "";
-
         const option = `
         <option
             data-center="${origin.latitude},${origin.longitude}"
@@ -205,7 +204,7 @@ module.exports = {
             filename: "form-submit.html",
             template: "./src/pages/form-submit.html"
         }),
-        ...customPages,
+        // ...customPages,
         new CopyPlugin([
             { from: "./src/commuter-positions", to: "commuter-positions" }
         ])

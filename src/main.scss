@@ -11,9 +11,16 @@ body {
 
 header {
     margin: 0 auto;
-    max-width: 800px;
-    padding: 24px 12px 24px;
+    // max-width: 800px;
+    padding: 12px 12px 12px;
+    border-bottom: 2px solid #ebebeb;
 
+    span.logo {
+        padding: 5px 0px 5px 8px;
+        background-color: black;
+        color: white;
+        margin-right: 6px;
+    }
     a {
         font-weight: bold;
         font-size: 1.5rem;
@@ -40,17 +47,24 @@ h2 {
 }
 
 h1 {
-    font-weight: bold;
+    // font-weight: bold;
     font-size: 2rem;
-    line-height: 2.5rem;
-    margin-bottom: 24px;
+    line-height: 3rem;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    text-align: center;
+
+    @media screen and (min-width: 500px) {
+        margin-top: 36px;
+    }
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     line-height: 2rem;
-    margin-bottom: 12px;
+    margin-bottom: 36px;
     margin-top: 12px;
+    text-align: center;
 }
 
 h3 {
@@ -81,6 +95,31 @@ strong.highlight {
     color: white;
     background-color: black;
     padding: 4px 2px;
+}
+
+section.selector {
+    @media screen and (min-width: 500px) {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 36px;
+        align-items: center;
+
+        > :nth-child(1),
+        > :nth-child(3) {
+            width: calc(50% - 40px);
+        }
+
+        > :nth-child(2) {
+            align-self: center;
+        }
+    }
+
+    > span {
+        text-align: center;
+        display: block;
+        height: 50px;
+        line-height: 50px;
+    }
 }
 
 .map-activate {
@@ -138,10 +177,7 @@ strong.highlight {
     }
 
     > .wrapper {
-        display: flex;
-        max-width: 400px;
         margin: 0 auto;
-        align-items: center;
 
         select {
             display: block;
@@ -168,6 +204,7 @@ strong.highlight {
             background-repeat: no-repeat, repeat;
             background-position: right 0.7em top 50%, 0 0;
             background-size: 0.65em auto, 100%;
+            margin-bottom: 12px;
         }
         select::-ms-expand {
             display: none;
@@ -458,7 +495,7 @@ footer {
 }
 
 form {
-    margin-top: 24px;
+    // margin-top: 24px;
     input {
         width: 100%;
         background-color: transparent;
