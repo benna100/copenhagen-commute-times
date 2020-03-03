@@ -69,53 +69,17 @@
             </section>
 
             <section class="selector">
-                <form
-                    action=" https://formsubmit.co/benjamin.dals.hughes@gmail.com "
-                    method="POST"
-                >
+                <div class="autocomplete-container">
                     <input
-                        type="text"
                         name="adress"
+                        type="search"
+                        id="dawa-autocomplete-input"
                         placeholder="Skriv pendleradressen"
                         required
                     />
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Skriv din email"
-                        required
-                    />
-                    <input
-                        type="hidden"
-                        name="_next"
-                        value="https://billige-boliger.nu/form-submit"
-                    />
-                    <input
-                        type="hidden"
-                        name="_subject"
-                        value="New submission!"
-                    />
-                    <input type="hidden" name="_captcha" value="false" />
-                    <input type="text" name="_honey" style="display:none" />
-                    <button type="submit">Få tilsendt kort</button>
-                </form>
-
-                <span>Eller</span>
-
-                <!-- <ul>
-                <li>Udforsk områder med korte pendlertider</li>
-                <li>Vælg forskellige transportmidler</li>
-                <li>Se de gennemsnitlige boligpriser på kortet</li>
-            </ul> -->
-
-                <div class="select-city">
-                    <div class="wrapper">
-                        <select>
-                            <%= cityOptions %>
-                        </select>
-                        <button>Vælg by</button>
-                    </div>
+                    <!-- Suggestions will appear here -->
                 </div>
+                <button>Se pendlerkort</button>
             </section>
 
             <section class="points-map">

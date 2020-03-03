@@ -4,8 +4,27 @@ import "nouislider/distribute/nouislider.css";
 import helper from "./helper";
 import mapHelper from "./map-helper";
 import slugify from "slugify";
+var dawaAutocomplete2 = require("dawa-autocomplete2");
 
 let setTimeouts = [];
+let adress;
+const inputElm = document.getElementById("dawa-autocomplete-input");
+const component = dawaAutocomplete2.dawaAutocomplete(inputElm, {
+    select: function(selected) {
+        adress = selected.tekst;
+    }
+});
+
+document
+    .querySelector("section.selector button")
+    .addEventListener("click", async () => {
+        const geoJsonAreaResponse = await fetch(
+            `https://commuter-area.herokuapp.com/commuter-area?adress=${adress}&commuterTime=1200&mode=CAR`
+        );
+        // i also need the lat lng for the map
+        const geoJsonArea = await await geoJsonAreaResponse.json();
+        startEverything();
+    });
 
 function updateCommutePositions(
     key,
@@ -86,46 +105,40 @@ function updateCommutePositions(
 }
 
 export default async function() {
-    const cityQueryParameter = helper.getUrlParameter("by");
-
-    let commuterPositionFilename = "copenhagen";
-    const selectCityOptions = document.querySelectorAll(
-        ".select-city select > option"
-    );
-
-    const queryParameterCityOptionsIndex = [...selectCityOptions]
-        .map(citiesList => slugify(citiesList.innerHTML, { lower: true }))
-        .indexOf(cityQueryParameter);
-
-    const isCityInQueryParameter = queryParameterCityOptionsIndex !== -1;
-    if (isCityInQueryParameter) {
-        commuterPositionFilename =
-            selectCityOptions[queryParameterCityOptionsIndex].value;
-        selectCityOptions[queryParameterCityOptionsIndex].selected = true;
-    }
-
-    const commuterPositionFilenames = [commuterPositionFilename];
-    const commuterPositionUrls = commuterPositionFilenames.map(
-        commuterPositionFilename =>
-            `./commuter-positions/city-${commuterPositionFilename}.json`
-    );
-
-    const commuterPositionFetchPromises = commuterPositionUrls.map(
-        commuterPositionUrl => fetch(commuterPositionUrl)
-    );
-    const commuterPositionResponses = await Promise.all(
-        commuterPositionFetchPromises
-    );
-    const commuterPositionResponsesJson = commuterPositionResponses.map(
-        commuterPositionResponse => commuterPositionResponse.json()
-    );
-    const commuterPositions = await Promise.all(commuterPositionResponsesJson);
-
-    startEverything(commuterPositions);
+    // const cityQueryParameter = helper.getUrlParameter("by");
+    // let commuterPositionFilename = "copenhagen";
+    // const selectCityOptions = document.querySelectorAll(
+    //     ".select-city select > option"
+    // );
+    // const queryParameterCityOptionsIndex = [...selectCityOptions]
+    //     .map(citiesList => slugify(citiesList.innerHTML, { lower: true }))
+    //     .indexOf(cityQueryParameter);
+    // const isCityInQueryParameter = queryParameterCityOptionsIndex !== -1;
+    // if (isCityInQueryParameter) {
+    //     commuterPositionFilename =
+    //         selectCityOptions[queryParameterCityOptionsIndex].value;
+    //     selectCityOptions[queryParameterCityOptionsIndex].selected = true;
+    // }
+    // const commuterPositionFilenames = [commuterPositionFilename];
+    // const commuterPositionUrls = commuterPositionFilenames.map(
+    //     commuterPositionFilename =>
+    //         `./commuter-positions/city-${commuterPositionFilename}.json`
+    // );
+    // const commuterPositionFetchPromises = commuterPositionUrls.map(
+    //     commuterPositionUrl => fetch(commuterPositionUrl)
+    // );
+    // const commuterPositionResponses = await Promise.all(
+    //     commuterPositionFetchPromises
+    // );
+    // const commuterPositionResponsesJson = commuterPositionResponses.map(
+    //     commuterPositionResponse => commuterPositionResponse.json()
+    // );
+    // const commuterPositions = await Promise.all(commuterPositionResponsesJson);
+    // startEverything(commuterPositions);
 }
 
-function startEverything(commuterPositions) {
-    window.activeCommuterPositions = commuterPositions[0];
+function startEverything(originPosition) {
+    // window.activeCommuterPositions = commuterPositions[0];
     const myRenderer = L.canvas({ padding: 0.5 });
 
     const slider = document.querySelector(".points-map .slider");
@@ -144,10 +157,6 @@ function startEverything(commuterPositions) {
         padding: [450, 450]
     });
 
-    const originPosition = {
-        latitude: window.activeCommuterPositions.originPosition.latitude,
-        longitude: window.activeCommuterPositions.originPosition.longitude
-    };
     const houseSalesStyle = new window.carto.style.CartoCSS(
         mapHelper.getHouseSalesStyling(0.74, [
             1500000,
@@ -183,19 +192,57 @@ function startEverything(commuterPositions) {
 
     let selectedSeconds;
     let activeTransportation = "commute-public";
-    slider.noUiSlider.on("update", function([selectedSecondsSlider]) {
+    let geoJsonAreaLayer;
+    slider.noUiSlider.on("change", async function([selectedSecondsSlider]) {
         selectedSeconds = selectedSecondsSlider;
         commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
-        updateCommutePositions(
-            activeTransportation,
-            selectedSeconds,
-            map,
-            markers,
-            window.activeCommuterPositions,
-            getColorHyf,
-            myRenderer,
-            originPosition
-        );
+        console.log(activeTransportation);
+
+        let mode = "";
+        // BICYCLE; CAR; TRANSIT,WALK, TRANSIT, WALK, BICYCLE, CAR, BUS, RAIL, default CAR
+        /*
+        h_bikeshare_mode :
+         [
+             ['TRANSIT,WALK', 'Transit'],
+             ['BUSISH,WALK', 'Bus only'],
+             ['TRAINISH,WALK', 'Train only'],
+             ['WALK', 'Walk only'],
+             ['BICYCLE', 'Bicycle only'],
+             ['WALK,BICYCLE', 'Rented Bicycle'],
+             ['TRANSIT,BICYCLE', 'Transit & Bicycle'],
+             ['TRANSIT,WALK,BICYCLE', 'Transit & Rented Bicycle'],
+             ['CAR', 'Car']
+         ], 
+        */
+        if (activeTransportation === "commute-public") {
+            mode = "TRANSIT,WALK";
+        } else if (activeTransportation === "commute-driving") {
+            mode = "CAR";
+        }
+        const geojsonAreaUrl = `http://178.62.109.188:8080/otp/routers/default/isochrone?fromPlace=${
+            window.activeCommuterPositions.originPosition.latitude
+        },${
+            window.activeCommuterPositions.originPosition.longitude
+        }&mode=${mode}&date=2019/07/18&time=8:12pm&maxWalkDistance=500&cutoffSec=${parseInt(
+            selectedSeconds
+        )}`;
+
+        const geojsonAreaResponse = await fetch(geojsonAreaUrl);
+        const geojsonArea = await geojsonAreaResponse.json();
+        if (geoJsonAreaLayer) {
+            geoJsonAreaLayer.clearLayers();
+        }
+        geoJsonAreaLayer = new L.geoJson(geojsonArea, {
+            style: {
+                weight: 1,
+                color: "blue",
+                opacity: 0.5,
+                fillColor: "blue",
+                fillOpacity: 0.3
+            }
+        }).addTo(map);
+
+        // here
     });
 
     const transportationButtons = document.querySelectorAll(
@@ -203,29 +250,9 @@ function startEverything(commuterPositions) {
     );
     helper.toggleButtons([...transportationButtons], key => {
         if (key === "driving") {
-            updateCommutePositions(
-                "commute-driving",
-                selectedSeconds,
-                map,
-                markers,
-                window.activeCommuterPositions,
-                getColorHyf,
-                myRenderer,
-                originPosition
-            );
             activeTransportation = "commute-driving";
         }
         if (key === "public") {
-            updateCommutePositions(
-                "commute-public",
-                selectedSeconds,
-                map,
-                markers,
-                window.activeCommuterPositions,
-                getColorHyf,
-                myRenderer,
-                originPosition
-            );
             activeTransportation = "commute-public";
         }
     });
