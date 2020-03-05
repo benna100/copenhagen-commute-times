@@ -80,6 +80,7 @@
                     <!-- Suggestions will appear here -->
                 </div>
                 <button>Se pendlerkort</button>
+                <span class="loading-map">Henter dit pendlerkort...</span>
             </section>
 
             <section class="points-map">
@@ -94,11 +95,7 @@
                     <div class="legend">
                         <p>Rejsetid</p>
                         <ul>
-                            <li id="lol">0 - 20 min</li>
-                            <li>20 - 40 min</li>
-                            <li>40 min - 1 time</li>
-                            <li>1 time - 1 time 20 min</li>
-                            <li>Mere end 1 time 20 min</li>
+                            <li>Område man kan pendle til</li>
                         </ul>
                     </div>
                     <div class="legend house-sales hidden">
@@ -133,17 +130,20 @@
                     <div class="slider"></div>
 
                     <p><strong>Transportmiddel</strong></p>
-                    <div class="transportation-wrapper">
-                        <button data-key="public" class="active">
-                            Offentlig 🚌🚆
-                        </button>
-                        <button data-key="driving">Bil 🚗</button>
-                    </div>
+                    <select name="" id="">
+                        <option value="TRANSIT,WALK">Offentlig</option>
+                        <option value="CAR">Bil</option>
+                        <option value="BICYCLE">Cykel</option>
+                        <option value="WALK">På gåben</option>
+                        <option value="BUS">Bus</option>
+                        <option value="RAIL">Tog</option>
+                    </select>
                     <p><strong>Boligpriser</strong></p>
                     <div class="house-sales-wrapper">
                         <button data-key="on">Vist 🌕</button>
                         <button data-key="off" class="active">Skjult 🌑</button>
                     </div>
+                    <button class="update-map">Opdater kort</button>
                 </div>
             </section>
 
