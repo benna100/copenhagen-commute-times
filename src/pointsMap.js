@@ -4,7 +4,7 @@ import "nouislider/distribute/nouislider.css";
 import helper from "./helper";
 import mapHelper from "./map-helper";
 import slugify from "slugify";
-var dawaAutocomplete2 = require("dawa-autocomplete2");
+// var dawaAutocomplete2 = require("dawa-autocomplete2");
 import jump from "jump.js";
 
 let adress;
@@ -74,7 +74,8 @@ noUiSlider.create(slider, {
         min: 0,
         max: 8000
     },
-    padding: [450, 450]
+    padding: [5 * 60, 5 * 60],
+    step: 5 * 60
 });
 
 slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
@@ -84,6 +85,7 @@ slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
 
 async function getGeoJsonArea({ position, transportationMode, commuterTime }) {
     const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+    console.log(geoJsonAreaUrl);
 
     const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
     // i also need the lat lng for the map
@@ -158,7 +160,7 @@ async function showAndFlyToSelectedArea() {
 
 export default function() {
     const inputElm = document.getElementById("dawa-autocomplete-input");
-    const component = dawaAutocomplete2.dawaAutocomplete(inputElm, {
+    const component = dawaAutocomplete.dawaAutocomplete(inputElm, {
         select: async function(selected) {
             adress = selected.tekst;
             const { x, y } = selected.data;
@@ -185,8 +187,7 @@ export default function() {
         if (helper.isMobileDevice()) {
             jump(".points-map", {
                 duration: 300,
-                offset: -12,
-                callback: showAndFlyToSelectedArea
+                offset: -12
             });
         }
         const transportationMode =
