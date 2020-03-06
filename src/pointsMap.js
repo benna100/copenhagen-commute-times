@@ -5,6 +5,7 @@ import helper from "./helper";
 import mapHelper from "./map-helper";
 import slugify from "slugify";
 var dawaAutocomplete2 = require("dawa-autocomplete2");
+import jump from "jump.js";
 
 let adress;
 let originPosition;
@@ -17,7 +18,10 @@ const startSelectedSeconds = 3300;
 let previousFilter;
 window.currentPriceIntervals = [1500000, 3000000, 4500000, 6000000];
 
-const $mapLoading = document.querySelector("section.selector .loading-map");
+const $mapLoadingOverlay = document.querySelector(
+    ".points-map .loading-overlay"
+);
+const $mapLoadingText = document.querySelector(".points-map .loading-text");
 const $adress = document.querySelector("section.selector input");
 const $updateMapButton = document.querySelector(
     ".slider-container button.update-map"
@@ -27,7 +31,8 @@ const $filters = document.querySelector(".slider-container");
 const $transportation = document.querySelector(".slider-container select");
 
 function showGeoJsonArea(geoJsonArea) {
-    $mapLoading.classList.remove("shown");
+    $mapLoadingOverlay.classList.remove("shown");
+    $mapLoadingText.classList.remove("shown");
     if (geoJsonAreaLayer) {
         geoJsonAreaLayer.clearLayers();
     }
@@ -94,7 +99,64 @@ helper.toggleButtons([...houseSalesToggleButtons], key => {
     housePriceShown = key === "on";
 });
 
-export default async function() {
+async function showAndFlyToSelectedArea() {
+    if (!originPosition) {
+        const getCoordinatesUrl = `https://dawa.aws.dk/autocomplete?q=${$adress.value}&type=adresse&caretpos=25&supplerendebynavn=true&stormodtagerpostnumre=true&multilinje=true`;
+        const getCoordinatesResponse = await fetch(getCoordinatesUrl);
+        // i also need the lat lng for the map
+        const coordinates = await getCoordinatesResponse.json();
+
+        const { x, y } = coordinates[0].data;
+        originPosition = {
+            latitude: y,
+            longitude: x
+        };
+    }
+
+    houseSalesStyle.setContent(
+        mapHelper.getHouseSalesStyling(
+            0.74,
+            mapHelper.getPriceIntervalFromOrigin(originPosition)
+        )
+    );
+
+    helper.updateHouseSalesLegendCountUp(
+        mapHelper.getPriceIntervalFromOrigin(originPosition),
+        mapHelper.getPriceIntervalFromOrigin(originPosition)
+    );
+
+    map.flyTo([
+        helper.isMobileDevice()
+            ? originPosition.latitude * 1.001
+            : originPosition.latitude,
+        helper.isMobileDevice()
+            ? originPosition.longitude
+            : originPosition.longitude * 1.02
+    ]);
+
+    if (marker) {
+        map.removeLayer(marker);
+    }
+
+    marker = L.marker([
+        originPosition.latitude,
+        originPosition.longitude
+    ]).addTo(map);
+
+    getCommuterMapButtonClicked = true;
+    const geoJsonArea = await getGeoJsonArea({
+        position: originPosition,
+        transportationMode: "TRANSIT,WALK",
+        commuterTime: startSelectedSeconds
+    });
+    showGeoJsonArea(geoJsonArea);
+
+    setTimeout(() => {
+        $filters.classList.add("shown");
+    }, 1000);
+}
+
+export default function() {
     const inputElm = document.getElementById("dawa-autocomplete-input");
     const component = dawaAutocomplete2.dawaAutocomplete(inputElm, {
         select: async function(selected) {
@@ -109,57 +171,24 @@ export default async function() {
 
     document
         .querySelector("section.selector button")
-        .addEventListener("click", async () => {
-            $filters.classList.add("shown");
-            if (!originPosition) {
-                const getCoordinatesUrl = `https://dawa.aws.dk/autocomplete?q=${$adress.value}&type=adresse&caretpos=25&supplerendebynavn=true&stormodtagerpostnumre=true&multilinje=true`;
-                const getCoordinatesResponse = await fetch(getCoordinatesUrl);
-                // i also need the lat lng for the map
-                const coordinates = await getCoordinatesResponse.json();
-
-                const { x, y } = coordinates[0].data;
-                originPosition = {
-                    latitude: y,
-                    longitude: x
-                };
-            }
-
-            houseSalesStyle.setContent(
-                mapHelper.getHouseSalesStyling(
-                    0.74,
-                    mapHelper.getPriceIntervalFromOrigin(originPosition)
-                )
-            );
-
-            $mapLoading.classList.add("shown");
-            map.flyTo([
-                helper.isMobileDevice()
-                    ? originPosition.latitude * 1.001
-                    : originPosition.latitude,
-                helper.isMobileDevice()
-                    ? originPosition.longitude
-                    : originPosition.longitude * 1.02
-            ]);
-
-            if (marker) {
-                map.removeLayer(marker);
-            }
-
-            marker = L.marker([
-                originPosition.latitude,
-                originPosition.longitude
-            ]).addTo(map);
-
-            getCommuterMapButtonClicked = true;
-            const geoJsonArea = await getGeoJsonArea({
-                position: originPosition,
-                transportationMode: "TRANSIT,WALK",
-                commuterTime: startSelectedSeconds
+        .addEventListener("click", () => {
+            $mapLoadingOverlay.classList.add("shown");
+            $mapLoadingText.classList.add("shown");
+            jump(".points-map", {
+                duration: 300,
+                offset: -12,
+                callback: showAndFlyToSelectedArea
             });
-            showGeoJsonArea(geoJsonArea);
         });
 
     $updateMapButton.addEventListener("click", async () => {
+        if (helper.isMobileDevice()) {
+            jump(".points-map", {
+                duration: 300,
+                offset: -12,
+                callback: showAndFlyToSelectedArea
+            });
+        }
         const transportationMode =
             $transportation.options[$transportation.selectedIndex].value;
 
@@ -183,7 +212,9 @@ export default async function() {
         );
 
         if (filterHasChanged) {
-            $updateMapButton.innerHTML = "Henter dit kort...";
+            $mapLoadingOverlay.classList.add("shown");
+            $mapLoadingText.classList.add("shown");
+            $updateMapButton.innerHTML = "Henter dit pendlerkort...";
             const geoJsonArea = await getGeoJsonArea({
                 position: originPosition,
                 transportationMode,
@@ -196,6 +227,18 @@ export default async function() {
         previousFilter = currentFilter;
     });
 }
+
+//     const priceInterval = mapHelper.getPriceIntervalFromOrigin({
+//         latitude: window.activeCommuterPositions.originPosition.latitude,
+//         longitude: window.activeCommuterPositions.originPosition.longitude
+//     });
+
+//     // we count up but we dont actually need the counting, just to change the code
+//     helper.updateHouseSalesLegendCountUp(
+//         [500000, 1000000, 1500000, 2000000],
+//         priceInterval
+//     );
+
 function initializeMap() {
     const myRenderer = L.canvas({ padding: 0.5 });
 
