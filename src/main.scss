@@ -10,11 +10,12 @@ body {
     position: relative;
     padding-bottom: 140px;
     min-height: 100vh;
+    background-color: rgb(245, 245, 245);
 }
 
 header {
+    background-color: white;
     margin: 0 auto;
-    // max-width: 800px;
     padding: 12px 12px 12px;
     border-bottom: 2px solid #ebebeb;
 
@@ -49,16 +50,19 @@ main {
         display: flex;
         flex-direction: column;
         text-align: center;
-        height: 50vh;
+        height: 500px;
         justify-content: center;
         align-items: center;
 
         h1 {
-            margin-bottom: 12px;
-        }
+            margin-bottom: 8px;
 
-        h2 strong {
-            // color: $primary;
+            @media screen and (max-width: 500px) {
+                margin-bottom: 24px;
+            }
+        }
+        h2 {
+            margin-bottom: 36px;
         }
     }
 }
@@ -69,20 +73,13 @@ h2 {
 }
 
 h1 {
-    // font-weight: bold;
     font-size: 2rem;
     line-height: 3rem;
-
-    @media screen and (min-width: 500px) {
-        margin-top: 36px;
-    }
 }
 
 h2 {
     font-size: 1.2rem;
     line-height: 2rem;
-    margin-bottom: 36px;
-    margin-top: 12px;
 }
 
 h3 {
@@ -198,10 +195,12 @@ strong.highlight {
     margin-top: 12px;
     margin-bottom: 12px;
     opacity: 0;
-    transition: opacity 0.3s;
+    transform: translateY(10px) scale(0.95);
+    transition: opacity 0.3s, transform 0.3s;
 
     &.shown {
         opacity: 1;
+        transform: translateY(0) scale(1);
     }
 
     p {
@@ -214,7 +213,7 @@ strong.highlight {
 
     @media screen and (min-width: 450px) {
         position: absolute;
-        bottom: 6px;
+        bottom: 12px;
         right: 12px;
         z-index: 1000;
         background-color: white;
@@ -257,7 +256,6 @@ strong.highlight {
     button {
         @include buttonStyle();
         margin-bottom: 8px;
-        max-width: 300px;
     }
 
     select {
@@ -266,6 +264,11 @@ strong.highlight {
         border-radius: 8px;
         border: 1px solid rgb(146, 145, 145);
         margin-bottom: 12px;
+        background-color: white;
+    }
+
+    #house-prices {
+        margin-bottom: 24px;
     }
 }
 
@@ -438,7 +441,7 @@ section.donate {
 
 footer {
     margin-top: 36px;
-    background-color: #f5f6f7;
+    background-color: white;
     border-top: solid 1px rgb(211, 211, 211);
     display: flex;
     flex-direction: column;
@@ -488,9 +491,12 @@ input {
     max-width: 400px;
     margin: 0 auto;
     display: block;
+    background-color: white;
 }
 
-section.selector {
+.selector {
+    width: 100%;
+
     button {
         @include buttonStyle();
 
