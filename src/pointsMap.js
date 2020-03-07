@@ -14,7 +14,7 @@ let marker;
 let geoJsonAreaLayer;
 let getCommuterMapButtonClicked = false;
 let selectedSeconds;
-const startSelectedSeconds = 3300;
+const startSelectedSeconds = 2400;
 let previousFilter;
 window.currentPriceIntervals = [1500000, 3000000, 4500000, 6000000];
 
@@ -73,7 +73,7 @@ noUiSlider.create(slider, {
     connect: [true, false],
     range: {
         min: 0,
-        max: 7000
+        max: 4000
     },
     padding: [5 * 60, 5 * 60],
     step: 5 * 60
@@ -85,8 +85,9 @@ slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
 });
 
 async function getGeoJsonArea({ position, transportationMode, commuterTime }) {
-    const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
-    // console.log(geoJsonAreaUrl);
+    const geoJsonAreaUrl = `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+    // const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+    console.log(geoJsonAreaUrl);
 
     const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
     // i also need the lat lng for the map

@@ -152,7 +152,7 @@ strong.highlight {
         left: 20px;
     }
     .checkbox:checked + .switch {
-        background-color: #7983ff;
+        background-color: $primary;
     }
     .checkbox {
         display: none;
