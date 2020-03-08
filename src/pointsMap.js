@@ -27,7 +27,9 @@ const $updateMapButton = document.querySelector(
     ".slider-container button.update-map"
 );
 const $filters = document.querySelector(".slider-container");
-const $transportation = document.querySelector(".slider-container select");
+const $transportationSelect = document.querySelector(
+    ".slider-container select"
+);
 const $houseSalesLegend = document.querySelector(".legend.house-sales");
 const $housePricesSelect = document.querySelector("#house-prices");
 
@@ -73,7 +75,7 @@ noUiSlider.create(slider, {
     connect: [true, false],
     range: {
         min: 0,
-        max: 4000
+        max: 6000
     },
     padding: [5 * 60, 5 * 60],
     step: 5 * 60
@@ -87,9 +89,9 @@ slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
 async function getGeoJsonArea({ position, transportationMode, commuterTime }) {
     // const geoJsonAreaUrl = `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
     const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
-    console.log(geoJsonAreaUrl);
 
     const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
+
     // i also need the lat lng for the map
     return geoJsonAreaResponse.json();
 }
@@ -169,13 +171,6 @@ export default function() {
         }
     });
 
-    document.querySelector(".selector input").addEventListener("focus", () => {
-        // jump(".selector input", {
-        //     duration: 300,
-        //     offset: -12
-        // });
-    });
-
     document.querySelector(".selector button").addEventListener("click", () => {
         $mapLoadingOverlay.classList.add("shown");
         $mapLoadingText.classList.add("shown");
@@ -194,8 +189,19 @@ export default function() {
             });
         }
         const transportationMode =
-            $transportation.options[$transportation.selectedIndex].value;
+            $transportationSelect.options[$transportationSelect.selectedIndex]
+                .value;
 
+        const MAX_MINUTES_FOR_CAR = 50;
+        if (
+            transportationMode === "CAR" &&
+            selectedSeconds > 60 * MAX_MINUTES_FOR_CAR
+        ) {
+            alert(
+                `Vælg pendlertid kortere end ${MAX_MINUTES_FOR_CAR} min for bil`
+            );
+            return;
+        }
         const housePricesVisibilityStatus =
             $housePricesSelect.options[$housePricesSelect.selectedIndex].value;
 
