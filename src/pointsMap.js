@@ -87,13 +87,19 @@ slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
 });
 
 async function getGeoJsonArea({ position, transportationMode, commuterTime }) {
+    // this adress breaks everything: Tærø 1, 4772 Langebæk
     // const geoJsonAreaUrl = `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
     const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
 
-    const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
+    try {
+        const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
 
-    // i also need the lat lng for the map
-    return geoJsonAreaResponse.json();
+        // i also need the lat lng for the map
+        return geoJsonAreaResponse.json();
+    } catch (error) {
+        alert("Vi kunne desværre ikke lave pendlerkort for denne adresse");
+        return;
+    }
 }
 
 async function showAndFlyToSelectedArea() {
@@ -151,11 +157,16 @@ async function showAndFlyToSelectedArea() {
         transportationMode: "TRANSIT,WALK",
         commuterTime: startSelectedSeconds
     });
-    showGeoJsonArea(geoJsonArea);
 
-    setTimeout(() => {
-        $filters.classList.add("shown");
-    }, 1200);
+    if (geoJsonArea.error) {
+        alert("Vi kunne desværre ikke lave pendlerkort for denne adresse");
+    } else {
+        showGeoJsonArea(geoJsonArea);
+
+        setTimeout(() => {
+            $filters.classList.add("shown");
+        }, 1200);
+    }
 }
 
 export default function() {
