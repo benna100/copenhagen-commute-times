@@ -85,8 +85,8 @@ slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
 });
 
 async function getGeoJsonArea({ position, transportationMode, commuterTime }) {
-    const geoJsonAreaUrl = `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
-    // const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+    // const geoJsonAreaUrl = `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+    const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
     console.log(geoJsonAreaUrl);
 
     const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
