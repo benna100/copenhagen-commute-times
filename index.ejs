@@ -122,27 +122,41 @@
                             <li>Mere end <span>6,0</span> millioner</li>
                         </ul>
                     </div>
+
+                    <button class="toggle-map-settings">
+                        Åbn indstillinger
+                    </button>
                 </div>
 
-                <div class="slider-container">
+                <div class="map-settings">
+                    <h2>Indstillinger</h2>
+                    <button class="close">X</button>
                     <p class="commute-slider">
                         <strong>Pendlertid</strong>: Op til
                         <strong><span></span></strong>
                     </p>
                     <div class="slider"></div>
 
-                    <p><strong>Transportmiddel</strong></p>
+                    <label for="transportation-mode"
+                        ><strong>Transportmiddel</strong></label
+                    >
                     <select id="transportation-mode">
                         <option value="TRANSIT,WALK">Offentlig</option>
+                        <option value="TRANSIT,BICYCLE"
+                            >Offentlig med cykel</option
+                        >
                         <option value="CAR">Bil</option>
                         <option value="BICYCLE">Cykel</option>
                         <option value="WALK">På gåben</option>
                     </select>
-                    <p><strong>Boligpriser</strong></p>
+                    <label for="house-prices"
+                        ><strong>Boligpriser</strong></label
+                    >
                     <select id="house-prices">
                         <option value="shown">Vist</option>
                         <option value="hidden" selected>Skjult</option>
                     </select>
+
                     <button class="update-map">Opdater kort</button>
                 </div>
             </section>

@@ -7,6 +7,8 @@ import slugify from "slugify";
 // var dawaAutocomplete2 = require("dawa-autocomplete2");
 import jump from "jump.js";
 
+const ENVIRONMENT = "development";
+
 let adress;
 let originPosition;
 let map;
@@ -18,38 +20,73 @@ const startSelectedSeconds = 2400;
 let previousFilter;
 window.currentPriceIntervals = [1500000, 3000000, 4500000, 6000000];
 
+// For css transition of map settings
+setTimeout(() => document.body.classList.add("loaded"), 0);
+
 const $mapLoadingOverlay = document.querySelector(
     ".points-map .loading-overlay"
+);
+
+const $toggleMapSettingsButton = document.querySelector(
+    "button.toggle-map-settings"
+);
+const $closeMapSettingsButton = document.querySelector(
+    ".map-settings button.close"
 );
 const $mapLoadingText = document.querySelector(".points-map .loading-text");
 const $adress = document.querySelector(".selector input");
 const $updateMapButton = document.querySelector(
-    ".slider-container button.update-map"
+    ".map-settings button.update-map"
 );
-const $filters = document.querySelector(".slider-container");
-const $transportationSelect = document.querySelector(
-    ".slider-container select"
-);
+const $mapSettings = document.querySelector(".map-settings");
+const $transportationSelect = document.querySelector(".map-settings select");
 const $houseSalesLegend = document.querySelector(".legend.house-sales");
 const $housePricesSelect = document.querySelector("#house-prices");
 
-function showGeoJsonArea(geoJsonArea) {
-    $mapLoadingOverlay.classList.remove("shown");
-    $mapLoadingText.classList.remove("shown");
-    if (geoJsonAreaLayer) {
-        geoJsonAreaLayer.clearLayers();
-    }
-    geoJsonAreaLayer = new L.geoJson(geoJsonArea, {
+const layers = [];
+
+function addLayer(geoJsonArea, color) {
+    const layer = new L.geoJson(geoJsonArea, {
         style: {
             weight: 1,
-            color: "blue",
-            opacity: 0.5,
-            fillColor: "blue",
-            fillOpacity: 0.3
+            color: color,
+            opacity: 0,
+            fillColor: color,
+            fillOpacity: color === "yellow" ? 1 : 0.3
         },
         cursor: "default"
-    }).addTo(map);
+    });
+    layer.addTo(map);
+    layers.push(layer);
 }
+
+function showGeoJsonAreas(geoJsonAreas) {
+    $mapLoadingOverlay.classList.remove("shown");
+    $mapLoadingText.classList.remove("shown");
+    if (layers.length > 0) {
+        layers.forEach(layer => layer.clearLayers());
+    }
+
+    geoJsonAreas.forEach((geoJsonArea, i) => {
+        let colors = ["blue", "green", "yellow"];
+        addLayer(geoJsonArea, colors[i]);
+    });
+
+    // addLayer(geoJsonAreas[2], "yellow");
+}
+
+function toggleMapSettings() {
+    console.log(2);
+    $mapSettings.classList.toggle("shown");
+    const toggleMapSettingsButtonText = $mapSettings.classList.contains("shown")
+        ? "Luk Indstillinger"
+        : "Åbn indstillinger";
+    $toggleMapSettingsButton.innerHTML = toggleMapSettingsButtonText;
+}
+
+$toggleMapSettingsButton.addEventListener("click", () => toggleMapSettings());
+
+$closeMapSettingsButton.addEventListener("click", () => toggleMapSettings());
 
 const houseSalesStyle = new window.carto.style.CartoCSS(
     mapHelper.getHouseSalesStyling(0.74, window.currentPriceIntervals)
@@ -67,7 +104,7 @@ houseSalesDenmarkLayer.hide();
 
 const slider = document.querySelector(".points-map .slider");
 const commuteTimeSpan = document.querySelector(
-    ".points-map .slider-container p span"
+    ".points-map .map-settings p span"
 );
 
 noUiSlider.create(slider, {
@@ -86,10 +123,21 @@ slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
     commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
 });
 
-async function getGeoJsonArea({ position, transportationMode, commuterTime }) {
+async function getGeoJsonAreas({ position, transportationMode, commuterTime }) {
     // this adress breaks everything: Tærø 1, 4772 Langebæk
-    // const geoJsonAreaUrl = `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
-    const geoJsonAreaUrl = `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+    // this is pretty wrong compared to traveltime app Thomas Kingosvej 1, Benløse, 4100 Ringsted. Tjek her, der ser det ud til at virke: http://178.62.109.188:8080/
+    // start (55.46158, 11.78782) end (55.67231, 12.56355)
+    const position2 = {
+        latitude: 55.914944,
+        longitude: 12.277362
+    };
+    // latitude2=${position2.latitude}&longitude2=${position2.longitude}&
+    const geoJsonAreaUrl =
+        ENVIRONMENT === "development"
+            ? `http://localhost:3000/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`
+            : `https://commuter-area.herokuapp.com/commuter-area?latitude=${position.latitude}&longitude=${position.longitude}&commuterTime=${commuterTime}&mode=${transportationMode}`;
+
+    console.log(geoJsonAreaUrl);
 
     try {
         const geoJsonAreaResponse = await fetch(geoJsonAreaUrl);
@@ -152,20 +200,23 @@ async function showAndFlyToSelectedArea() {
     ]).addTo(map);
 
     getCommuterMapButtonClicked = true;
-    const geoJsonArea = await getGeoJsonArea({
+    const geoJsonAreas = await getGeoJsonAreas({
         position: originPosition,
         transportationMode: "TRANSIT,WALK",
         commuterTime: startSelectedSeconds
     });
 
-    if (geoJsonArea.error) {
+    console.log(geoJsonAreas);
+
+    if (geoJsonAreas.error) {
         alert("Vi kunne desværre ikke lave pendlerkort for denne adresse");
     } else {
-        showGeoJsonArea(geoJsonArea);
+        showGeoJsonAreas(geoJsonAreas);
 
-        setTimeout(() => {
-            $filters.classList.add("shown");
-        }, 1200);
+        setTimeout(
+            () => $toggleMapSettingsButton.classList.add("attention"),
+            1200
+        );
     }
 }
 
@@ -193,6 +244,7 @@ export default function() {
     });
 
     $updateMapButton.addEventListener("click", async () => {
+        toggleMapSettings();
         if (helper.isMobileDevice()) {
             jump(".points-map", {
                 duration: 300,
@@ -239,13 +291,13 @@ export default function() {
             $mapLoadingOverlay.classList.add("shown");
             $mapLoadingText.classList.add("shown");
             $updateMapButton.innerHTML = "Henter dit pendlerkort...";
-            const geoJsonArea = await getGeoJsonArea({
+            const geoJsonAreas = await getGeoJsonAreas({
                 position: originPosition,
                 transportationMode,
                 commuterTime: selectedSeconds
             });
 
-            showGeoJsonArea(geoJsonArea);
+            showGeoJsonAreas(geoJsonAreas);
             $updateMapButton.innerHTML = "Opdater kort";
         }
         previousFilter = currentFilter;
