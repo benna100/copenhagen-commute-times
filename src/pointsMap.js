@@ -7,6 +7,7 @@ import slugify from "slugify";
 // var dawaAutocomplete2 = require("dawa-autocomplete2");
 import jump from "jump.js";
 
+// development|production
 const ENVIRONMENT = "development";
 
 let adress;
@@ -52,9 +53,9 @@ function addLayer(geoJsonArea, color) {
             color: color,
             opacity: 0,
             fillColor: color,
-            fillOpacity: color === "yellow" ? 1 : 0.3
+            fillOpacity: color === "yellow" ? 1 : 0.3,
         },
-        cursor: "default"
+        cursor: "default",
     });
     layer.addTo(map);
     layers.push(layer);
@@ -64,7 +65,7 @@ function showGeoJsonAreas(geoJsonAreas) {
     $mapLoadingOverlay.classList.remove("shown");
     $mapLoadingText.classList.remove("shown");
     if (layers.length > 0) {
-        layers.forEach(layer => layer.clearLayers());
+        layers.forEach((layer) => layer.clearLayers());
     }
 
     geoJsonAreas.forEach((geoJsonArea, i) => {
@@ -112,24 +113,26 @@ noUiSlider.create(slider, {
     connect: [true, false],
     range: {
         min: 0,
-        max: 6000
+        max: 6000,
     },
     padding: [5 * 60, 5 * 60],
-    step: 5 * 60
+    step: 5 * 60,
 });
 
-slider.noUiSlider.on("update", async function([selectedSecondsSlider]) {
+slider.noUiSlider.on("update", async function ([selectedSecondsSlider]) {
     selectedSeconds = selectedSecondsSlider;
     commuteTimeSpan.innerHTML = helper.secondsToHms(selectedSeconds);
 });
 
 async function getGeoJsonAreas({ position, transportationMode, commuterTime }) {
     // this adress breaks everything: Tærø 1, 4772 Langebæk
-    // this is pretty wrong compared to traveltime app Thomas Kingosvej 1, Benløse, 4100 Ringsted. Tjek her, der ser det ud til at virke: http://178.62.109.188:8080/
+    // HELT FORKERT: Nordhøjen 10, Himmelev, 4000 Roskilde
+    // Arr shit den er helt fucked. OTP er noget værre lort.
+    // this is pretty wrong compared to traveltime app Thomas Kingosvej 1. Tjek her, der ser det ud til at virke: http://178.62.109.188:8080/
     // start (55.46158, 11.78782) end (55.67231, 12.56355)
     const position2 = {
         latitude: 55.914944,
-        longitude: 12.277362
+        longitude: 12.277362,
     };
     // latitude2=${position2.latitude}&longitude2=${position2.longitude}&
     const geoJsonAreaUrl =
@@ -160,7 +163,7 @@ async function showAndFlyToSelectedArea() {
         const { x, y } = coordinates[0].data;
         originPosition = {
             latitude: y,
-            longitude: x
+            longitude: x,
         };
     }
 
@@ -184,7 +187,7 @@ async function showAndFlyToSelectedArea() {
                 : originPosition.latitude,
             helper.isMobileDevice()
                 ? originPosition.longitude
-                : originPosition.longitude * 1.02
+                : originPosition.longitude * 1.02,
         ],
         9.5,
         { duration: 1 }
@@ -196,14 +199,14 @@ async function showAndFlyToSelectedArea() {
 
     marker = L.marker([
         originPosition.latitude,
-        originPosition.longitude
+        originPosition.longitude,
     ]).addTo(map);
 
     getCommuterMapButtonClicked = true;
     const geoJsonAreas = await getGeoJsonAreas({
         position: originPosition,
         transportationMode: "TRANSIT,WALK",
-        commuterTime: startSelectedSeconds
+        commuterTime: startSelectedSeconds,
     });
 
     console.log(geoJsonAreas);
@@ -220,17 +223,17 @@ async function showAndFlyToSelectedArea() {
     }
 }
 
-export default function() {
+export default function () {
     const inputElm = document.getElementById("dawa-autocomplete-input");
     const component = dawaAutocomplete.dawaAutocomplete(inputElm, {
-        select: async function(selected) {
+        select: async function (selected) {
             adress = selected.tekst;
             const { x, y } = selected.data;
             originPosition = {
                 latitude: y,
-                longitude: x
+                longitude: x,
             };
-        }
+        },
     });
 
     document.querySelector(".selector button").addEventListener("click", () => {
@@ -239,7 +242,7 @@ export default function() {
         jump(".points-map", {
             duration: 300,
             offset: -12,
-            callback: showAndFlyToSelectedArea
+            callback: showAndFlyToSelectedArea,
         });
     });
 
@@ -248,7 +251,7 @@ export default function() {
         if (helper.isMobileDevice()) {
             jump(".points-map", {
                 duration: 300,
-                offset: -12
+                offset: -12,
             });
         }
         const transportationMode =
@@ -279,7 +282,7 @@ export default function() {
         const currentFilter = [
             transportationMode,
             JSON.stringify(originPosition),
-            selectedSeconds
+            selectedSeconds,
         ];
 
         const filterHasChanged = !helper.arraysEqual(
@@ -294,7 +297,7 @@ export default function() {
             const geoJsonAreas = await getGeoJsonAreas({
                 position: originPosition,
                 transportationMode,
-                commuterTime: selectedSeconds
+                commuterTime: selectedSeconds,
             });
 
             showGeoJsonAreas(geoJsonAreas);
@@ -321,10 +324,10 @@ function initializeMap() {
     map = mapHelper.initialiseAllMapFunctionality({
         originPosition: {
             latitude: 55.683542,
-            longitude: 12.571738
+            longitude: 12.571738,
         },
         mapContainer: document.querySelector(".points-map"),
-        houseSalesStyle
+        houseSalesStyle,
     });
 
     client.getLeafletLayer().addTo(map);
